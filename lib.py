@@ -1,8 +1,7 @@
 import requests
-import sys
+# import sys
 import openpyxl as xl
-
-base_url = "http://192.168.0.3:8080"
+import argparse
 
 keys = {
     "A"  :  0,
@@ -58,23 +57,23 @@ class SetItem:
         distance = 12 - (self.song.key - self.set_key) if self.song.key > self.set_key else self.set_key - self.song.key
         return distance
 
-def load_songs_from_sheets(sheetsFilename: str, sheetName: str):
+def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
     try:
         try:
-            doc = xl.load_workbook(sheetsFilename)
-            sheet = doc[sheetName]
-            print("Loading songs from '" + sheet.title + "'...")
+            doc = xl.load_workbook(spreadsheet)
+            sheet_name = doc[sheet_name]
+            print("Loading songs from '" + sheet_name.title + "'...")
             songs = [
-                (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value)])
-                for row in range(1, sheet.max_row + 1)
+                (str(sheet_name.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet_name.cell(row, 3).value)])
+                for row in range(1, sheet_name.max_row + 1)
             ] # extremely complicated conversion of songs
             songs = [song for song in songs if song[0] != "None"] # removing None values
             return songs
         except FileNotFoundError:
-            print("Spreadsheet '" + sheetsFilename + "' doesn't seem to exist. Try again.")
+            print("Spreadsheet '" + spreadsheet + "' doesn't seem to exist. Try again.")
             exit(1)
     except KeyError:
-        print("Worksheet '" + sheetName + "' doesn't seem to exist. Try again.")
+        print("Worksheet '" + sheet_name + "' doesn't seem to exist. Try again.")
         exit(1)
 
 def fetch_songs(session: requests.Session, base_url: str):
@@ -115,19 +114,15 @@ def create_set(session: requests.Session, base_url: str, headers, set_name: str,
     for matched_song in matched_songs:
         add_song(session, base_url, headers, set_id, matched_song)
 
-if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Invalid number of arguments!")
-        exit(1)
+def run(url: str, spreadsheet: str, sheet: str, set_name: str):
     session = requests.Session()
-    cookie = get_cookie(session, base_url)
-    headers = {
-        "Cookie": f"jagses={cookie}"
-    }
-    sheets_filename = sys.argv[1]
-    sheet_name = sys.argv[2]
-    set_name = sys.argv[3]
-    all_songs = fetch_songs(session, base_url)
-    sheet_songs = load_songs_from_sheets(sheets_filename, sheet_name)
+    cookie = get_cookie(session, url)
+    if not cookie:
+        print("Failed to retrieve session cookie.")
+        exit(1)
+    headers = {"Cookie": f"jagses={cookie}"}
+
+    all_songs = fetch_songs(session, url)
+    sheet_songs = load_songs_from_sheets(spreadsheet, sheet)
     matched_songs = match_songs(all_songs, sheet_songs)
-    create_set(session, base_url, headers, set_name, matched_songs)
+    create_set(session, url, headers, set_name, matched_songs)
