@@ -1,4 +1,4 @@
-from cli import run
+from lib import run
 import argparse
 
 def cli():

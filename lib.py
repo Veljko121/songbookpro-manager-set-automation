@@ -1,7 +1,5 @@
 import requests
-# import sys
 import openpyxl as xl
-import argparse
 
 keys = {
     "A"  :  0,
@@ -28,6 +26,8 @@ keys = {
     "D#m": 21,
     "Em" : 22,
     "Fm" : 23,
+
+    "None" : -1,
 }
 
 class Song:
@@ -61,13 +61,14 @@ def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
     try:
         try:
             doc = xl.load_workbook(spreadsheet)
-            sheet_name = doc[sheet_name]
-            print("Loading songs from '" + sheet_name.title + "'...")
+            sheet = doc[sheet_name]
+            print("Loading songs from '" + sheet.title + "'...")
             songs = [
-                (str(sheet_name.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet_name.cell(row, 3).value)])
-                for row in range(1, sheet_name.max_row + 1)
+                (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value)])
+                for row in range(1, sheet.max_row + 1)
             ] # extremely complicated conversion of songs
             songs = [song for song in songs if song[0] != "None"] # removing None values
+            print("Loaded all songs successfully.")
             return songs
         except FileNotFoundError:
             print("Spreadsheet '" + spreadsheet + "' doesn't seem to exist. Try again.")
@@ -83,6 +84,7 @@ def fetch_songs(session: requests.Session, base_url: str):
     return songs
 
 def get_cookie(session: requests.Session, base_url: str):
+    print('Waiting for approval from application...')
     session.get(base_url + "/api/editor/songs")
     cookies = session.cookies.get_dict()
     cookie = cookies['jagses']
@@ -92,15 +94,18 @@ def match_songs(all_songs, sheet_songs):
     matched_songs = []
     for order, sheet_song in enumerate(sheet_songs):
         for s in all_songs:
-            if sheet_song[0] == s.name:
-                set_item = SetItem(s, order, sheet_song[1])
-                matched_songs.append(set_item)
-                break
-            elif sheet_song[0] == s.subtitle:
+            if matches(sheet_song, s):
                 set_item = SetItem(s, order, sheet_song[1])
                 matched_songs.append(set_item)
                 break
     return matched_songs
+
+def matches(sheet_song: tuple, song: Song):
+    if sheet_song[0] in song.name:
+        return True
+    if sheet_song[0] == song.subtitle:
+        return True
+    return False
 
 def add_song(session: requests.Session, base_url: str, headers, set_id: int, set_item: SetItem):
     response = session.post(base_url + f"/api/arrange/setItem", headers=headers, json={"order": set_item.order, "setId": set_id, "songId": set_item.song.id, "type": 1})
@@ -113,6 +118,7 @@ def create_set(session: requests.Session, base_url: str, headers, set_name: str,
     session.put(base_url + f"/api/arrange/sets/{set_id}", json={"name": set_name})
     for matched_song in matched_songs:
         add_song(session, base_url, headers, set_id, matched_song)
+    print(f"Set '{set_name}' created successfully!")
 
 def run(url: str, spreadsheet: str, sheet: str, set_name: str):
     session = requests.Session()
