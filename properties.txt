@@ -1,0 +1,4 @@
+URL=http://192.168.0.9:8080
+SPREADSHEET=/mnt/e/Veljko/Muzička karijera/Veljko solo/Repertoari/repertoari.xlsx
+SHEET=La Torcia 2
+SET_NAME=La Torcia 5
