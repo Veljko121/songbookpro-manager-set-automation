@@ -56,26 +56,24 @@ class SetItem:
     def key_offset(self):
         distance = 12 - (self.song.key - self.set_key) if self.song.key > self.set_key else self.set_key - self.song.key
         return distance
+    
+def get_sheet_names(spreadsheet: str):
+    """Fetch all sheet names from the given spreadsheet."""
+    doc = xl.load_workbook(spreadsheet, read_only=True)
+    return doc.sheetnames
 
+# throws FileNotFoundError and KeyError
 def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
-    try:
-        try:
-            doc = xl.load_workbook(spreadsheet)
-            sheet = doc[sheet_name]
-            print("Loading songs from '" + sheet.title + "'...")
-            songs = [
-                (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value)])
-                for row in range(1, sheet.max_row + 1)
-            ] # extremely complicated conversion of songs
-            songs = [song for song in songs if song[0] != "None"] # removing None values
-            print("Loaded all songs successfully.")
-            return songs
-        except FileNotFoundError:
-            print("Spreadsheet '" + spreadsheet + "' doesn't seem to exist. Try again.")
-            exit(1)
-    except KeyError:
-        print("Worksheet '" + sheet_name + "' doesn't seem to exist. Try again.")
-        exit(1)
+    doc = xl.load_workbook(spreadsheet)
+    sheet = doc[sheet_name]
+    print("Loading songs from '" + sheet.title + "'...")
+    songs = [
+        (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value)])
+        for row in range(1, sheet.max_row + 1)
+    ] # extremely complicated conversion of songs
+    songs = [song for song in songs if song[0] != "None"] # removing None values
+    print("Loaded all songs successfully.")
+    return songs
 
 def fetch_songs(session: requests.Session, base_url: str):
     response = session.get(base_url + "/api/editor/songs")
@@ -120,15 +118,29 @@ def create_set(session: requests.Session, base_url: str, headers, set_name: str,
         add_song(session, base_url, headers, set_id, matched_song)
     print(f"Set '{set_name}' created successfully!")
 
-def run(url: str, spreadsheet: str, sheet: str, set_name: str):
+def run(ipAddress: str, spreadsheet: str, sheet: str, set_name: str):
+    # Check if any argument is empty and raise specific errors
+    if not ipAddress:
+        raise ValueError("URL must not be empty.")
+    if not spreadsheet:
+        raise ValueError("Spreadsheet path must not be empty.")
+    if not sheet:
+        raise ValueError("Sheet name must not be empty.")
+    if not set_name:
+        raise ValueError("Set name must not be empty.")
+    
+    url = f"http://{ipAddress}:8080"
+
     session = requests.Session()
     cookie = get_cookie(session, url)
     if not cookie:
         print("Failed to retrieve session cookie.")
         exit(1)
+
     headers = {"Cookie": f"jagses={cookie}"}
 
     all_songs = fetch_songs(session, url)
     sheet_songs = load_songs_from_sheets(spreadsheet, sheet)
     matched_songs = match_songs(all_songs, sheet_songs)
     create_set(session, url, headers, set_name, matched_songs)
+

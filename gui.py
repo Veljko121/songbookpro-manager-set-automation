@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import *
-from PyQt6.QtCore import Qt, QRect, QCoreApplication, QMetaObject
+from PyQt6.QtCore import Qt, QCoreApplication, QMetaObject
 import sys
+from lib import run, get_sheet_names
+import os
 
 # -*- coding: utf-8 -*-
 
@@ -55,10 +57,12 @@ class Ui_CreateSet(object):
 
         self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.sheetNameLabel)
 
-        self.sheetNameLineEdit = QLineEdit(CreateSet)
-        self.sheetNameLineEdit.setObjectName(u"sheetNameLineEdit")
-
-        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.sheetNameLineEdit)
+        # self.sheetNameLineEdit = QLineEdit(CreateSet)
+        # self.sheetNameLineEdit.setObjectName(u"sheetNameLineEdit")
+        self.sheetNameComboBox = QComboBox(CreateSet)
+        self.sheetNameComboBox.setObjectName(u"sheetNameComboBox")
+        self.sheetNameComboBox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed) 
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.sheetNameComboBox)
 
         self.setNameLabel = QLabel(CreateSet)
         self.setNameLabel.setObjectName(u"setNameLabel")
@@ -132,52 +136,97 @@ class CreateSet(QWidget):
         self.adjustSize()
         self.setFixedHeight(self.height())
         self.ui.browseButton.clicked.connect(self.open_file_dialog)
-
-    def initUI(self):
-        layout = QVBoxLayout()
-
-        # Spreadsheet Path
-        path_layout = QHBoxLayout()
-        self.path_label = QLabel("Spreadsheet path:")
-        self.path_input = QLineEdit()
-        self.browse_button = QPushButton("Browse")
-        self.browse_button.clicked.connect(self.open_file_dialog)
-
-        path_layout.addWidget(self.path_label)
-        path_layout.addWidget(self.path_input)
-        path_layout.addWidget(self.browse_button)
-
-        # Sheet Selection
-        sheet_layout = QHBoxLayout()
-        self.sheet_label = QLabel("Sheet:")
-        self.sheet_input = QLineEdit()
-
-        sheet_layout.addWidget(self.sheet_label)
-        sheet_layout.addWidget(self.sheet_dropdown)
-
-        # Add layouts to main layout
-        layout.addLayout(path_layout)
-        layout.addLayout(sheet_layout)
-
-        self.setLayout(layout)
-        self.setWindowTitle("Spreadsheet Selector")
+        self.ui.createSetPushButton.clicked.connect(self.create_set)
+        self.ui.sheetNameComboBox.setEnabled(False)
+        self.ui.spreadsheetPathLineEdit.editingFinished.connect(self.update_sheets)
+        self.load_cache()
 
     def open_file_dialog(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open Spreadsheet", "", "Excel Files (*.xlsx *.xls)")
         if file_path:
             self.ui.spreadsheetPathLineEdit.setText(file_path)
+            self.update_sheets()
+
+    def update_sheets(self):
+        # Try to load sheet names
+        try:
+            sheets = get_sheet_names(self.ui.spreadsheetPathLineEdit.text())  # Get sheet names
+            self.ui.sheetNameComboBox.clear()  # Clear previous entries
+            self.ui.sheetNameComboBox.addItems(sheets)  # Add new sheet names
+            self.ui.sheetNameComboBox.setEnabled(True)  # Enable the combo box
+        except Exception as e:
+            if self.ui.spreadsheetPathLineEdit.text():
+                self.show_error_message(f"Failed to read spreadsheet: {e}")
+            
+            self.ui.sheetNameComboBox.clear()
+            self.ui.sheetNameComboBox.setEnabled(False)
+
+    def create_set(self):
+        ipAddress = self.ui.ipAddressLineEdit.text()
+        spreadsheet = self.ui.spreadsheetPathLineEdit.text()
+        sheet = self.ui.sheetNameComboBox.currentText()
+        set_name = self.ui.setNameLineEdit.text()
+
+        try:
+            run(ipAddress, spreadsheet, sheet, set_name)
+            self.save_to_properties(ipAddress, spreadsheet, sheet, set_name)
+            msg_box = QMessageBox(self)
+            msg_box.setIcon(QMessageBox.Icon.Information)  # Use Critical icon for errors
+            msg_box.setWindowTitle("Success")
+            msg_box.setText(f"Set {set_name} created successfully.")
+            msg_box.exec()
+        except ValueError as e:
+            self.show_error_message(str(e))
+        except FileNotFoundError:
+            self.show_error_message("Spreadsheet '" + spreadsheet + "' doesn't seem to exist. Try again.")
+        except KeyError:
+            self.show_error_message("Worksheet '" + sheet + "' doesn't seem to exist. Try again.")
+            
+    def show_error_message(self, message):
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(QMessageBox.Icon.Critical)  # Use Critical icon for errors
+        msg_box.setWindowTitle("Error")
+        msg_box.setText(message)
+        msg_box.exec()
+
+    def save_to_properties(self, ipAddress, spreadsheet, sheet, set_name):
+        # Set the hidden .properties file path
+        properties_file = "application.properties"
+
+        # Prepare the content
+        properties_content = f"IP_ADDRESS={ipAddress}\nSPREADSHEET_PATH={spreadsheet}\nSHEET={sheet}\nSET_NAME={set_name}"
+
+        # Write the data to the .properties file
+        with open(properties_file, "w") as file:
+            file.write(properties_content)
+
+    def load_cache(self):
+        home_dir = os.path.expanduser("~")  # Get the user's home directory
+        properties_file = os.path.join(home_dir, ".properties")
+
+        if os.path.exists(properties_file):
+            try:
+                with open(properties_file, "r") as file:
+                    # Read and split the file content line by line
+                    properties = {}
+                    for line in file.readlines():
+                        key, value = line.strip().split("=", 1)
+                        properties[key] = value
+
+                    # Set the values to the UI elements
+                    self.ui.ipAddressLineEdit.setText(properties.get("IP_ADDRESS", ""))
+                    self.ui.spreadsheetPathLineEdit.setText(properties.get("SPREADSHEET_PATH", ""))
+                    self.update_sheets()
+                    self.ui.sheetNameComboBox.setCurrentText(properties.get("SHEET", ""))
+                    self.ui.setNameLineEdit.setText(properties.get("SET_NAME", ""))
+
+            except Exception as e:
+                self.show_error_message(f"Failed to load properties: {e}")
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = CreateSet()
     window.show()
     sys.exit(app.exec())
-
-# if __name__ == "__main__":
-#     import sys
-#     app = QApplication(sys.argv)
-#     AddLokalDialog = QDialog()
-#     ui = Ui_CreateSet()
-#     ui.setupUi(AddLokalDialog)
-#     AddLokalDialog.show()
-#     sys.exit(app.exec())

@@ -25,14 +25,21 @@ def main():
     properties_file = "properties.txt"
     properties = load_properties(properties_file)
     
-    required_keys = ["URL", "SPREADSHEET", "SHEET", "SET_NAME"]
+    required_keys = ["IP_ADDRESS", "SPREADSHEET_PATH", "SHEET", "SET_NAME"]
     
     for key in required_keys:
         if key not in properties or not properties[key]:
             print(f"Error: Missing required property '{key}' in {properties_file}.")
             exit(1)
     
-    run(properties["URL"], properties["SPREADSHEET"], properties["SHEET"], properties["SET_NAME"])
+    try:
+        run(properties["IP_ADDRESS"], properties["SPREADSHEET_PATH"], properties["SHEET"], properties["SET_NAME"])
+    except FileNotFoundError:
+        print("Spreadsheet '" + properties["SPREADSHEET_PATH"] + "' doesn't seem to exist. Try again.")
+        exit(1)
+    except KeyError:
+        print("Worksheet '" + properties["SHEET"] + "' doesn't seem to exist. Try again.")
+        exit(1)
 
 if __name__ == "__main__":
     main()
