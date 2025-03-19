@@ -59,23 +59,29 @@ class SetItem:
     
 def get_sheet_names(spreadsheet: str):
     """Fetch all sheet names from the given spreadsheet."""
-    doc = xl.load_workbook(spreadsheet, read_only=True)
-    return doc.sheetnames
+    return xl.load_workbook(spreadsheet, read_only=True).sheetnames
 
-# throws FileNotFoundError and KeyError
+
 def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
+    """
+    Load songs from the given spreadsheet and sheet name.
+    ## Exceptions
+    - FileNotFoundError
+    - KeyError
+    """
     doc = xl.load_workbook(spreadsheet)
     sheet = doc[sheet_name]
-    print("Loading songs from '" + sheet.title + "'...")
     songs = [
         (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value.strip())])
         for row in range(1, sheet.max_row + 1)
     ] # extremely complicated conversion of songs
     songs = [song for song in songs if song[0] != "None"] # removing None values
-    print("Loaded all songs successfully.")
     return songs
 
 def fetch_songs(session: requests.Session, base_url: str):
+    """
+    Fetch all songs from SongbookPro.
+    """
     response = session.get(base_url + "/api/editor/songs")
     songs_json = response.json()
     songs = [Song(song['Id'], song['name'], song['key'], song['subTitle'], song['KeyShift']) for song in songs_json]
@@ -108,7 +114,8 @@ def matches(sheet_song: tuple, song: Song):
 def add_song(session: requests.Session, base_url: str, headers, set_id: int, set_item: SetItem):
     response = session.post(base_url + f"/api/arrange/setItem", headers=headers, json={"order": set_item.order, "setId": set_id, "songId": set_item.song.id, "type": 1})
     set_item_id = response.json()["setItem"]["Id"]
-    response = session.put(base_url + "/api/arrange/setItem", headers=headers, json=[{"id": set_item_id, "data": {"keyOfset": set_item.key_offset()}}])
+    if set_item.set_key > 0:
+        response = session.put(base_url + "/api/arrange/setItem", headers=headers, json=[{"id": set_item_id, "data": {"keyOfset": set_item.key_offset()}}])
 
 def create_set(session: requests.Session, base_url: str, headers, set_name: str, matched_songs):
     response = session.post(base_url + "/api/arrange/sets", headers=headers)
