@@ -68,7 +68,7 @@ def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
     sheet = doc[sheet_name]
     print("Loading songs from '" + sheet.title + "'...")
     songs = [
-        (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value)])
+        (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value.strip())])
         for row in range(1, sheet.max_row + 1)
     ] # extremely complicated conversion of songs
     songs = [song for song in songs if song[0] != "None"] # removing None values
