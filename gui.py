@@ -197,7 +197,7 @@ class CreateSet(QWidget):
         properties_content = f"IP_ADDRESS={ipAddress}\nSPREADSHEET_PATH={spreadsheet}\nSHEET={sheet}\nSET_NAME={set_name}"
 
         # Write the data to the .properties file
-        with open(properties_file, "w") as file:
+        with open(properties_file, "w", encoding="utf-8") as file:
             file.write(properties_content)
 
     def load_cache(self):
@@ -205,7 +205,7 @@ class CreateSet(QWidget):
 
         if os.path.exists(properties_file):
             try:
-                with open(properties_file, "r") as file:
+                with open(properties_file, "r", encoding="utf-8") as file:
                     # Read and split the file content line by line
                     properties = {}
                     for line in file.readlines():
