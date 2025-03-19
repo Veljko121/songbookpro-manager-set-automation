@@ -201,8 +201,7 @@ class CreateSet(QWidget):
             file.write(properties_content)
 
     def load_cache(self):
-        home_dir = os.path.expanduser("~")  # Get the user's home directory
-        properties_file = os.path.join(home_dir, ".properties")
+        properties_file = "application.properties"
 
         if os.path.exists(properties_file):
             try:
