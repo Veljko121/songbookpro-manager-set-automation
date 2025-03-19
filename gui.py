@@ -1,18 +1,8 @@
-from PyQt6.QtWidgets import *
+from PyQt6.QtWidgets import QSizePolicy, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QComboBox, QApplication, QMessageBox, QFileDialog, QWidget
 from PyQt6.QtCore import Qt, QCoreApplication, QMetaObject
 import sys
 from lib import run, get_sheet_names
 import os
-
-# -*- coding: utf-8 -*-
-
-################################################################################
-## Form generated from reading UI file 'songbookpro-manager-set-automationYxUIbH.ui'
-##
-## Created by: Qt User Interface Compiler version 5.15.15
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
 
 
 class Ui_CreateSet(object):
