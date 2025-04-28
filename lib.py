@@ -68,14 +68,32 @@ def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
     ## Exceptions
     - FileNotFoundError
     - KeyError
+    - ValueError
     """
     doc = xl.load_workbook(spreadsheet)
     sheet = doc[sheet_name]
-    songs = [
-        (str(sheet.cell(row, 2).value).replace("‘", "'").replace("’", "'"), keys[str(sheet.cell(row, 3).value.strip())])
-        for row in range(1, sheet.max_row + 1)
-    ] # extremely complicated conversion of songs
-    songs = [song for song in songs if song[0] != "None"] # removing None values
+    
+    songs = []
+    row = 1
+    while True:
+        name_cell = sheet.cell(row, 2).value  # Column B
+        if name_cell is None:
+            break  # Stop if the B column is empty
+        
+        # Normalize song name and load key
+        name = str(name_cell).replace("‘", "'").replace("’", "'")
+        key_cell = sheet.cell(row, 3).value  # Column C
+        if key_cell is None:
+            raise ValueError(f"Missing key for song '{name}' in row {row}")
+        
+        key_str = str(key_cell).strip()
+        if key_str not in keys:
+            raise KeyError(f"Unknown key '{key_str}' for song '{name}' in row {row}")
+        
+        key_value = keys[key_str]
+        songs.append((name, key_value))
+        row += 1
+
     return songs
 
 def fetch_songs(session: requests.Session, base_url: str):
