@@ -147,15 +147,17 @@ class CreateSet(QWidget):
         except Exception as e:
             if self.ui.spreadsheetPathLineEdit.text():
                 self.show_error_message(f"Failed to read spreadsheet: {e}")
-            
+            self.ui.spreadsheetPathLineEdit.clear()
             self.ui.sheetNameComboBox.clear()
             self.ui.sheetNameComboBox.setEnabled(False)
+            ipAddress, _, _, _ = self.load_properties()
+            self.save_to_properties(ipAddress, "", "", "")
+
+    def load_properties(self):
+        return self.ui.ipAddressLineEdit.text(), self.ui.spreadsheetPathLineEdit.text(), self.ui.sheetNameComboBox.currentText(), self.ui.setNameLineEdit.text()
 
     def create_set(self):
-        ipAddress = self.ui.ipAddressLineEdit.text()
-        spreadsheet = self.ui.spreadsheetPathLineEdit.text()
-        sheet = self.ui.sheetNameComboBox.currentText()
-        set_name = self.ui.setNameLineEdit.text()
+        ipAddress, spreadsheet, sheet, set_name = self.load_properties()
 
         try:
             run(ipAddress, spreadsheet, sheet, set_name)
