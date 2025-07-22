@@ -150,8 +150,8 @@ class CreateSet(QWidget):
             self.ui.spreadsheetPathLineEdit.clear()
             self.ui.sheetNameComboBox.clear()
             self.ui.sheetNameComboBox.setEnabled(False)
-            ipAddress, _, _, _ = self.load_properties()
-            self.save_to_properties(ipAddress, "", "", "")
+            ipAddress, _, _, set_name = self.load_properties()
+            self.save_to_properties(ipAddress, "", "", set_name)
 
     def load_properties(self):
         return self.ui.ipAddressLineEdit.text(), self.ui.spreadsheetPathLineEdit.text(), self.ui.sheetNameComboBox.currentText(), self.ui.setNameLineEdit.text()
