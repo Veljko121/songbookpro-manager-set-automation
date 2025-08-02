@@ -91,7 +91,7 @@ def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
             raise KeyError(f"Unknown key '{key_str}' for song '{name}' in row {row}")
         
         key_value = keys[key_str]
-        songs.append((name, key_value))
+        songs.append((name.strip(), key_value))
         row += 1
 
     return songs
