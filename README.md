@@ -6,7 +6,6 @@ There are multiple ways of setting up the environment, most notably:
 ## Virtual environment
 First prepare the environment:
 ```
-# prepare the environment
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
