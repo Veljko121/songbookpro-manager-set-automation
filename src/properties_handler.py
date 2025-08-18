@@ -1,14 +1,22 @@
+import os
+
+REQUIRED_PROPERTIES = ["IP_ADDRESS", "SPREADSHEET_PATH", "SHEET", "SET_NAME"]
+
 class PropertiesHandler():
     def __init__(self, properties_path: str = "resources/application.properties"):
         self.properties_path = properties_path
-        self.property_names = ["IP_ADDRESS", "SPREADSHEET_PATH", "SHEET", "SET_NAME"]
+        self.check_properties_file()
+
+    def check_properties_file(self):
+        if not os.path.exists(self.properties_path):
+            open(self.properties_path, "w", encoding="utf-8").close()
 
     def load_properties(self):
         properties = {}
-        with open(self.properties_path, "r") as file:
+        with open(self.properties_path, "r", encoding="utf-8") as file:
             lines = file.readlines()
         for line in lines:
-            elements = line.strip().split("=")
+            elements = line.strip().split("=", 1)
             property_name, value = elements[0], elements[1]
             properties[property_name] = value
         self.fill_in_missing_properties(properties)
@@ -16,12 +24,12 @@ class PropertiesHandler():
     
     def save_properties(self, properties: dict):
         self.fill_in_missing_properties(properties)
-        with open(self.properties_path, "w") as file:
+        with open(self.properties_path, "w", encoding="utf-8") as file:
             for property_name in properties.keys():
                 file.write(self.to_property_line(property_name, properties[property_name]))
 
     def fill_in_missing_properties(self, properties: dict):
-        for required_property in self.property_names:
+        for required_property in REQUIRED_PROPERTIES:
             if required_property not in properties:
                 properties[required_property] = ""
 
