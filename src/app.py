@@ -22,7 +22,7 @@ def load_properties(filepath):
     return properties
 
 def main():
-    properties_file = "properties.txt"
+    properties_file = "resources/application.properties"
     properties = load_properties(properties_file)
     
     required_keys = ["IP_ADDRESS", "SPREADSHEET_PATH", "SHEET", "SET_NAME"]

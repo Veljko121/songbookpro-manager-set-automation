@@ -119,7 +119,7 @@ class Ui_CreateSet(object):
 
 
 class CreateSet(QWidget):
-    def __init__(self):
+    def __init__(self, properties_path: str = "resources/application.properties"):
         super(CreateSet, self).__init__()
         self.ui = Ui_CreateSet()
         self.ui.setupUi(self)
@@ -129,6 +129,7 @@ class CreateSet(QWidget):
         self.ui.createSetPushButton.clicked.connect(self.create_set)
         self.ui.sheetNameComboBox.setEnabled(False)
         self.ui.spreadsheetPathLineEdit.editingFinished.connect(self.update_sheets)
+        self.properties_path = properties_path
         self.load_cache()
 
     def open_file_dialog(self):
@@ -182,22 +183,14 @@ class CreateSet(QWidget):
         msg_box.exec()
 
     def save_to_properties(self, ipAddress, spreadsheet, sheet, set_name):
-        # Set the hidden .properties file path
-        properties_file = "application.properties"
-
-        # Prepare the content
         properties_content = f"IP_ADDRESS={ipAddress}\nSPREADSHEET_PATH={spreadsheet}\nSHEET={sheet}\nSET_NAME={set_name}"
-
-        # Write the data to the .properties file
-        with open(properties_file, "w", encoding="utf-8") as file:
+        with open(self.properties_path, "w", encoding="utf-8") as file:
             file.write(properties_content)
 
     def load_cache(self):
-        properties_file = "application.properties"
-
-        if os.path.exists(properties_file):
+        if os.path.exists(self.properties_path):
             try:
-                with open(properties_file, "r", encoding="utf-8") as file:
+                with open(self.properties_path, "r", encoding="utf-8") as file:
                     # Read and split the file content line by line
                     properties = {}
                     for line in file.readlines():
