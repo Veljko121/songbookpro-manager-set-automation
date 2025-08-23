@@ -19,21 +19,21 @@ class PropertiesHandler():
             elements = line.strip().split("=", 1)
             property_name, value = elements[0], elements[1]
             properties[property_name] = value
-        self.fill_in_missing_properties(properties)
+        self._fill_in_missing_properties(properties)
         return properties
     
     def save_properties(self, properties: dict):
-        self.fill_in_missing_properties(properties)
+        self._fill_in_missing_properties(properties)
         with open(self.properties_path, "w", encoding="utf-8") as file:
             for property_name in properties.keys():
-                file.write(self.to_property_line(property_name, properties[property_name]))
+                file.write(self._to_property_line(property_name, properties[property_name]))
 
-    def fill_in_missing_properties(self, properties: dict):
+    def _fill_in_missing_properties(self, properties: dict):
         for required_property in REQUIRED_PROPERTIES:
             if required_property not in properties:
                 properties[required_property] = ""
 
-    def to_property_line(self, key, value):
+    def _to_property_line(self, key, value):
         return f"{key}={value}\n"
 
     
