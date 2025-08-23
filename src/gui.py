@@ -1,8 +1,7 @@
 from PyQt6.QtWidgets import QSizePolicy, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QComboBox, QApplication, QMessageBox, QFileDialog, QWidget
 from PyQt6.QtCore import Qt, QCoreApplication, QMetaObject
 import sys
-from lib import run, get_sheet_names
-import os
+import lib
 from properties_handler import PropertiesHandler
 
 
@@ -142,7 +141,7 @@ class CreateSet(QWidget):
     def update_sheets(self):
         # Try to load sheet names
         try:
-            sheets = get_sheet_names(self.ui.spreadsheetPathLineEdit.text())  # Get sheet names
+            sheets = lib.get_sheet_names(self.ui.spreadsheetPathLineEdit.text())  # Get sheet names
             self.ui.sheetNameComboBox.clear()  # Clear previous entries
             self.ui.sheetNameComboBox.addItems(sheets)  # Add new sheet names
             self.ui.sheetNameComboBox.setEnabled(True)  # Enable the combo box
@@ -162,7 +161,7 @@ class CreateSet(QWidget):
         ipAddress, spreadsheet, sheet, set_name = self.load_properties()
 
         try:
-            run(ipAddress, spreadsheet, sheet, set_name)
+            lib.run(ipAddress, spreadsheet, sheet, set_name)
             self.save_to_properties(ipAddress, spreadsheet, sheet, set_name)
             msg_box = QMessageBox(self)
             msg_box.setIcon(QMessageBox.Icon.Information)  # Use Critical icon for errors
