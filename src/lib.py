@@ -1,5 +1,7 @@
 import requests
 import openpyxl as xl
+from song import Song
+from set_item import SetItem
 
 keys = {
     "A"  :  0,
@@ -29,33 +31,6 @@ keys = {
 
     "None" : -1,
 }
-
-class Song:
-    def __init__(self, id: int, name: str, key: int, subtitle: str, key_shift: int):
-        self.id = id
-        self.name = name
-        self.key = key
-        self.subtitle = subtitle
-        self.key_shift = key_shift
-
-    def active_key(self):
-        key = self.key + self.key_shift
-        if self.key <= 11:
-            key %= 12
-        else:
-            if key >= 24:
-                key -= 12
-        return key
-
-class SetItem:
-    def __init__(self, song: Song, order: int, set_key: int):
-        self.song = song
-        self.order = order
-        self.set_key = set_key
-
-    def key_offset(self):
-        distance = 12 - (self.song.key - self.set_key) if self.song.key > self.set_key else self.set_key - self.song.key
-        return distance
     
 def get_sheet_names(spreadsheet: str):
     """Fetch all sheet names from the given spreadsheet."""
