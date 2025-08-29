@@ -1,4 +1,3 @@
-import requests
 import openpyxl as xl
 from song import Song
 from set_item import SetItem
