@@ -118,9 +118,8 @@ def create_set(session: requests.Session, base_url: str, headers, set_name: str,
         add_song(session, base_url, headers, set_id, matched_song)
     print(f"Set '{set_name}' created successfully!")
 
-def run(ipAddress: str, spreadsheet: str, sheet: str, set_name: str):
-    # Check if any argument is empty and raise specific errors
-    if not ipAddress:
+def validate_parameters(ip_address: str, spreadsheet: str, sheet: str, set_name: str):
+    if not ip_address:
         raise ValueError("URL must not be empty.")
     if not spreadsheet:
         raise ValueError("Spreadsheet path must not be empty.")
@@ -128,8 +127,11 @@ def run(ipAddress: str, spreadsheet: str, sheet: str, set_name: str):
         raise ValueError("Sheet name must not be empty.")
     if not set_name:
         raise ValueError("Set name must not be empty.")
+
+def run(ip_address: str, spreadsheet: str, sheet: str, set_name: str):
+    validate_parameters(ip_address, spreadsheet, sheet, set_name)
     
-    url = f"http://{ipAddress}:8080"
+    url = f"http://{ip_address}:8080"
 
     session = requests.Session()
     cookie = get_cookie(session, url)
