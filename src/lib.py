@@ -2,6 +2,7 @@ import requests
 import openpyxl as xl
 from song import Song
 from set_item import SetItem
+from songbookpro_manager_service import SongbookProManagerService
 
 keys = {
     "A"  :  0,
@@ -32,11 +33,12 @@ keys = {
     "None" : -1,
 }
     
+# TODO: Refactor into LocalSheetReader
 def get_sheet_names(spreadsheet: str):
     """Fetch all sheet names from the given spreadsheet."""
     return xl.load_workbook(spreadsheet, read_only=True).sheetnames
 
-
+# TODO: Refactor into LocalSheetReader
 def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
     """
     Load songs from the given spreadsheet and sheet name.
@@ -51,13 +53,12 @@ def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
     songs = []
     row = 1
     while True:
-        name_cell = sheet.cell(row, 2).value  # Column B
+        name_cell = sheet.cell(row, 2).value
         if name_cell is None:
-            break  # Stop if the B column is empty
+            break
         
-        # Normalize song name and load key
         name = str(name_cell).replace("‘", "'").replace("’", "'")
-        key_cell = sheet.cell(row, 3).value  # Column C
+        key_cell = sheet.cell(row, 3).value
         if key_cell is None:
             raise ValueError(f"Missing key for song '{name}' in row {row}")
         
@@ -70,22 +71,6 @@ def load_songs_from_sheets(spreadsheet: str, sheet_name: str):
         row += 1
 
     return songs
-
-def fetch_songs(session: requests.Session, base_url: str):
-    """
-    Fetch all songs from SongbookPro.
-    """
-    response = session.get(base_url + "/api/editor/songs")
-    songs_json = response.json()
-    songs = [Song(song['Id'], song['name'], song['key'], song['subTitle'], song['KeyShift']) for song in songs_json]
-    return songs
-
-def get_cookie(session: requests.Session, base_url: str):
-    print('Waiting for approval from application...')
-    session.get(base_url + "/api/editor/songs")
-    cookies = session.cookies.get_dict()
-    cookie = cookies['jagses']
-    return cookie
 
 def match_songs(all_songs, sheet_songs):
     matched_songs = []
@@ -104,20 +89,6 @@ def matches(sheet_song: tuple, song: Song):
         return True
     return False
 
-def add_song(session: requests.Session, base_url: str, headers, set_id: int, set_item: SetItem):
-    response = session.post(base_url + f"/api/arrange/setItem", headers=headers, json={"order": set_item.order, "setId": set_id, "songId": set_item.song.id, "type": 1})
-    set_item_id = response.json()["setItem"]["Id"]
-    if set_item.set_key > 0:
-        response = session.put(base_url + "/api/arrange/setItem", headers=headers, json=[{"id": set_item_id, "data": {"keyOfset": set_item.key_offset()}}])
-
-def create_set(session: requests.Session, base_url: str, headers, set_name: str, matched_songs):
-    response = session.post(base_url + "/api/arrange/sets", headers=headers)
-    set_id = response.json()["Id"]
-    session.put(base_url + f"/api/arrange/sets/{set_id}", json={"name": set_name})
-    for matched_song in matched_songs:
-        add_song(session, base_url, headers, set_id, matched_song)
-    print(f"Set '{set_name}' created successfully!")
-
 def validate_parameters(ip_address: str, spreadsheet: str, sheet: str, set_name: str):
     if not ip_address:
         raise ValueError("URL must not be empty.")
@@ -130,18 +101,10 @@ def validate_parameters(ip_address: str, spreadsheet: str, sheet: str, set_name:
 
 def run(ip_address: str, spreadsheet: str, sheet: str, set_name: str):
     validate_parameters(ip_address, spreadsheet, sheet, set_name)
-    
-    url = f"http://{ip_address}:8080"
 
-    session = requests.Session()
-    cookie = get_cookie(session, url)
-    if not cookie:
-        print("Failed to retrieve session cookie.")
-        exit(1)
+    song_access_object = SongbookProManagerService(ip_address)
 
-    headers = {"Cookie": f"jagses={cookie}"}
-
-    all_songs = fetch_songs(session, url)
+    all_songs = song_access_object._find_all_songs()
     sheet_songs = load_songs_from_sheets(spreadsheet, sheet)
     matched_songs = match_songs(all_songs, sheet_songs)
-    create_set(session, url, headers, set_name, matched_songs)
+    song_access_object.create_set(set_name, matched_songs)
