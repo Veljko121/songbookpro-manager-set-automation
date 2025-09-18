@@ -1,6 +1,6 @@
 import os
 
-REQUIRED_PROPERTIES = ["IP_ADDRESS", "SPREADSHEET_PATH", "SHEET", "SET_NAME"]
+REQUIRED_PROPERTIES = ["IP_ADDRESS", "PORT", "SPREADSHEET_PATH", "SHEET", "SET_NAME"]
 
 class PropertiesHandler():
     def __init__(self, properties_path: str = "resources/application.properties"):
@@ -40,4 +40,5 @@ class PropertiesHandler():
 if __name__ == "__main__":
     handler = PropertiesHandler()
     properties = handler.load_properties()
+    print(properties)
     handler.save_properties(properties)
