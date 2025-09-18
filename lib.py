@@ -13,7 +13,8 @@ keys = {
     "F"  :  8,
     "F#" :  9, "Gb" :  9,
     "G"  : 10,
-    "Ab" : 11, "G#" : 11, 
+    "Ab" : 11, "G#" : 11,
+    
     "F#m": 12, "Gbm": 12,
     "Gm" : 13,
     "G#m": 14, "Abm": 14,
@@ -143,10 +144,12 @@ def create_set(session: requests.Session, base_url: str, headers, set_name: str,
         add_song(session, base_url, headers, set_id, matched_song)
     print(f"Set '{set_name}' created successfully!")
 
-def run(ipAddress: str, spreadsheet: str, sheet: str, set_name: str):
+def run(ipAddress: str, port: int, spreadsheet: str, sheet: str, set_name: str):
     # Check if any argument is empty and raise specific errors
     if not ipAddress:
         raise ValueError("URL must not be empty.")
+    if not port:
+        raise ValueError("Port must not be empty.")
     if not spreadsheet:
         raise ValueError("Spreadsheet path must not be empty.")
     if not sheet:
@@ -154,7 +157,7 @@ def run(ipAddress: str, spreadsheet: str, sheet: str, set_name: str):
     if not set_name:
         raise ValueError("Set name must not be empty.")
     
-    url = f"http://{ipAddress}:8080"
+    url = f"http://{ipAddress}:{port}"
 
     session = requests.Session()
     cookie = get_cookie(session, url)

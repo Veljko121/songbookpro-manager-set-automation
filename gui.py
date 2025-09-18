@@ -81,10 +81,13 @@ class Ui_CreateSet(object):
 
         self.urlHorizontalLayout.addWidget(self.ipAddressLineEdit)
 
-        self.portLabel = QLabel(CreateSet)
-        self.portLabel.setObjectName(u"portLabel")
+        self.colonLabel = QLabel(CreateSet)
+        self.colonLabel.setObjectName(u"portLabel")
+        self.urlHorizontalLayout.addWidget(self.colonLabel)
 
-        self.urlHorizontalLayout.addWidget(self.portLabel)
+        self.portLineEdit = QLineEdit(CreateSet)
+        self.portLineEdit.setObjectName(u"portLineEdit")
+        self.urlHorizontalLayout.addWidget(self.portLineEdit)
 
 
         self.formLayout.setLayout(0, QFormLayout.ItemRole.FieldRole, self.urlHorizontalLayout)
@@ -113,7 +116,7 @@ class Ui_CreateSet(object):
         self.setNameLabel.setText(QCoreApplication.translate("CreateSet", u"Set name", None))
         self.urlLabel.setText(QCoreApplication.translate("CreateSet", u"URL", None))
         self.httpLabel.setText(QCoreApplication.translate("CreateSet", u"http://", None))
-        self.portLabel.setText(QCoreApplication.translate("CreateSet", u":8080", None))
+        self.colonLabel.setText(QCoreApplication.translate("CreateSet", u":", None))
         self.createSetPushButton.setText(QCoreApplication.translate("CreateSet", u"Create set", None))
     # retranslateUi
 
@@ -150,18 +153,18 @@ class CreateSet(QWidget):
             self.ui.spreadsheetPathLineEdit.clear()
             self.ui.sheetNameComboBox.clear()
             self.ui.sheetNameComboBox.setEnabled(False)
-            ipAddress, _, _, set_name = self.load_properties()
-            self.save_to_properties(ipAddress, "", "", set_name)
+            ipAddress, port, _, _, set_name = self.load_properties()
+            self.save_to_properties(ipAddress, port, "", "", set_name)
 
     def load_properties(self):
-        return self.ui.ipAddressLineEdit.text(), self.ui.spreadsheetPathLineEdit.text(), self.ui.sheetNameComboBox.currentText(), self.ui.setNameLineEdit.text()
+        return self.ui.ipAddressLineEdit.text(), int(self.ui.portLineEdit.text()), self.ui.spreadsheetPathLineEdit.text(), self.ui.sheetNameComboBox.currentText(), self.ui.setNameLineEdit.text()
 
     def create_set(self):
-        ipAddress, spreadsheet, sheet, set_name = self.load_properties()
+        ipAddress, port, spreadsheet, sheet, set_name = self.load_properties()
 
         try:
-            run(ipAddress, spreadsheet, sheet, set_name)
-            self.save_to_properties(ipAddress, spreadsheet, sheet, set_name)
+            run(ipAddress, port, spreadsheet, sheet, set_name)
+            self.save_to_properties(ipAddress, port, spreadsheet, sheet, set_name)
             msg_box = QMessageBox(self)
             msg_box.setIcon(QMessageBox.Icon.Information)  # Use Critical icon for errors
             msg_box.setWindowTitle("Success")
@@ -181,12 +184,12 @@ class CreateSet(QWidget):
         msg_box.setText(message)
         msg_box.exec()
 
-    def save_to_properties(self, ipAddress, spreadsheet, sheet, set_name):
+    def save_to_properties(self, ipAddress, port, spreadsheet, sheet, set_name):
         # Set the hidden .properties file path
         properties_file = "application.properties"
 
         # Prepare the content
-        properties_content = f"IP_ADDRESS={ipAddress}\nSPREADSHEET_PATH={spreadsheet}\nSHEET={sheet}\nSET_NAME={set_name}"
+        properties_content = f"IP_ADDRESS={ipAddress}\nPORT={port}\nSPREADSHEET_PATH={spreadsheet}\nSHEET={sheet}\nSET_NAME={set_name}"
 
         # Write the data to the .properties file
         with open(properties_file, "w", encoding="utf-8") as file:
@@ -206,6 +209,7 @@ class CreateSet(QWidget):
 
                     # Set the values to the UI elements
                     self.ui.ipAddressLineEdit.setText(properties.get("IP_ADDRESS", ""))
+                    self.ui.portLineEdit.setText(properties.get("PORT", ""))
                     self.ui.spreadsheetPathLineEdit.setText(properties.get("SPREADSHEET_PATH", ""))
                     self.update_sheets()
                     self.ui.sheetNameComboBox.setCurrentText(properties.get("SHEET", ""))
