@@ -157,7 +157,10 @@ class CreateSet(QWidget):
             self.save_to_properties(ipAddress, port, "", "", set_name)
 
     def load_properties(self):
-        return self.ui.ipAddressLineEdit.text(), int(self.ui.portLineEdit.text()), self.ui.spreadsheetPathLineEdit.text(), self.ui.sheetNameComboBox.currentText(), self.ui.setNameLineEdit.text()
+        port = ""
+        if self.ui.portLineEdit.text() is not "":
+            port = int(self.ui.portLineEdit.text())
+        return self.ui.ipAddressLineEdit.text(), port, self.ui.spreadsheetPathLineEdit.text(), self.ui.sheetNameComboBox.currentText(), self.ui.setNameLineEdit.text()
 
     def create_set(self):
         ipAddress, port, spreadsheet, sheet, set_name = self.load_properties()
