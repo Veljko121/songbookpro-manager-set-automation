@@ -1,4 +1,5 @@
 from google_sheets_repertoire_repository import GoogleSheetsRepertoireRepository
+from database_song_repository import DatabaseSongRepository
 
 class Service:
 
@@ -12,24 +13,34 @@ class Service:
     # 1. load song names from the repertoire
     # 2. find songs from the database by those names (check if each one exists)
 
-    def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params):
-        if sheets_selection == 0:
+    def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict):
+        if sheets_selection == 0: # Google Sheets
             self.repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_url"], sheets_params["sheet"])
-        elif sheets_selection == 1:
-            pass
+        elif sheets_selection == 1: # Local spreadsheets
+            pass # TODO
         else:
             raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
+        
+        if database_selection == 0: # SQLite database
+            self.song_repository = DatabaseSongRepository(database_params["database_path"])
+        elif database_selection == 1: # SongbookPro Manager
+            pass # TODO
+        else:
+            raise ValueError(f"Database method selection not valid - selected {database_selection}. Value should be either 0 or 1.")
 
         repertoire_songs = self.repertoire_repository.get_songs()
-        
-
+        song = self.song_repository.find_by_name("Marija (Divlje Jagode)")
         
 if __name__ == "__main__":
     service = Service()
     sheets_selection = 0
+    database_selection = 0
     sheets_params = {
         "credentials_path": "resources/credentials.json",
         "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1Sx-4TBd1RZTSTZj4V9cFGHGp50JtzlnsLb8UixmIy7U/edit?gid=1836157840#gid=1836157840",
         "sheet": "Cohiba"
     }
-    service.create_set(sheets_selection, sheets_params, None, None)
+    database_params = {
+        "database_path": "/home/veljko/.wine/drive_c/users/veljko/AppData/Roaming/Songbook Systems/SongbookPro/songs.db"
+    }
+    service.create_set(sheets_selection, sheets_params, database_selection, database_params)
