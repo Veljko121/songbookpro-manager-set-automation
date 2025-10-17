@@ -6,3 +6,6 @@ class GoogleSheetsRepertoireRepository:
         self.client = gspread.auth.service_account(credentials_path)
         self.spreadsheet = self.client.open_by_url(spreadsheet_url)
         self.sheet = self.spreadsheet.worksheet(sheet)
+
+    def get_songs(self, songs_column: int = 1):
+        return self.sheet.col_values(songs_column)
