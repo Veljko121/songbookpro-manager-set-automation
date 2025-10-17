@@ -6,243 +6,298 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>511</width>
-    <height>266</height>
+    <width>401</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Set Creator</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
+
    <item>
-    <widget class="QLabel" name="repertoireDataSourceConfigurationLabel">
-     <property name="styleSheet">
-      <string notr="true">font-size: 16px; font-weight: bold;</string>
-     </property>
-     <property name="text">
-      <string>Repertoire data source configuration</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="repertoireTabWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="googleSheetsTab">
-      <attribute name="title">
-       <string>Google Sheets</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QFormLayout" name="googleSheetsFormLayout">
-         <property name="labelAlignment">
-          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="credentialsPathLabel">
-           <property name="text">
-            <string>Credentials path:</string>
+    <layout class="QVBoxLayout" name="repertoireDataSourceSectionVerticalLayout">
+     <item>
+      <widget class="QLabel" name="repertoireDataSourceConfigurationLabel">
+       <property name="styleSheet">
+        <string notr="true">font-size: 16px; font-weight: bold;</string>
+       </property>
+       <property name="text">
+        <string>Repertoire data source configuration</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTabWidget" name="repertoireTabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="googleSheetsTab">
+        <attribute name="title">
+         <string>Google Sheets</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QFormLayout" name="googleSheetsFormLayout">
+           <property name="labelAlignment">
+            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLineEdit" name="credentialsPathLineEdit"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="browseCredentialsPushButton">
+           <item row="0" column="0">
+            <widget class="QLabel" name="credentialsPathLabel">
              <property name="text">
-              <string>...</string>
+              <string>Credentials path:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLineEdit" name="credentialsPathLineEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="browseCredentialsPushButton">
+               <property name="baseSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="spreadsheetURLLabel">
+             <property name="text">
+              <string>Spreadsheet URL:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="spreadsheetURLLineEdit"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="googleSheetLabel">
+             <property name="text">
+              <string>Sheet:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="googleSheetComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="spreadsheetURLLabel">
-           <property name="text">
-            <string>Spreadsheet URL:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="spreadsheetURLLineEdit"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="googleSheetLabel">
-           <property name="text">
-            <string>Sheet:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="googleSheetComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="localSpreadsheetTab">
-      <attribute name="title">
-       <string>Local spreadsheet</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <layout class="QFormLayout" name="localSpreadsheetFormLayout">
-         <property name="labelAlignment">
-          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="spreadsheetPathLabel">
-           <property name="text">
-            <string>Spreadsheet path:</string>
+       </widget>
+       <widget class="QWidget" name="localSpreadsheetTab">
+        <attribute name="title">
+         <string>Local spreadsheet</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QFormLayout" name="localSpreadsheetFormLayout">
+           <property name="labelAlignment">
+            <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QLineEdit" name="spreadsheetPathLineEdit"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="browseSpreadsheetsPushButton">
+           <item row="0" column="0">
+            <widget class="QLabel" name="spreadsheetPathLabel">
              <property name="text">
-              <string>...</string>
+              <string>Spreadsheet path:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLineEdit" name="spreadsheetPathLineEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="browseSpreadsheetsPushButton">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="localSheetLabel">
+             <property name="text">
+              <string>Sheet:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="localSheetComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="localSheetLabel">
-           <property name="text">
-            <string>Sheet:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="localSheetComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
+
    <item>
-    <widget class="Line" name="line">
+    <widget class="Line" name="firstLine">
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>
      </property>
     </widget>
    </item>
+
    <item>
-    <widget class="QLabel" name="databaseConfigurationLabel">
-     <property name="styleSheet">
-      <string notr="true">font-size: 16px; font-weight: bold;</string>
-     </property>
-     <property name="text">
-      <string>Database configuration</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="databaseTabWidget">
-     <property name="currentIndex">
-      <number>1</number>
-     </property>
-     <widget class="QWidget" name="localDatabaseTab">
-      <attribute name="title">
-       <string>Local database (SQLite)</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QFormLayout" name="localDatabaseFormLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="databasePathLabel">
-           <property name="text">
-            <string>Path:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="localDatabasePathHorizontalLayout">
-           <item>
-            <widget class="QLineEdit" name="localDatabasePathLineEdit"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="browseLocalDatabasePushButton">
+    <layout class="QVBoxLayout" name="databaseConfigurationSectionVerticalLayout">
+     <item>
+      <widget class="QLabel" name="databaseConfigurationLabel">
+       <property name="styleSheet">
+        <string notr="true">font-size: 16px; font-weight: bold;</string>
+       </property>
+       <property name="text">
+        <string>Database configuration</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTabWidget" name="databaseTabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="localDatabaseTab">
+        <attribute name="title">
+         <string>Local database (SQLite)</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QFormLayout" name="localDatabaseFormLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="databasePathLabel">
              <property name="text">
-              <string>...</string>
+              <string>Path:</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="localDatabasePathHorizontalLayout">
+             <item>
+              <widget class="QLineEdit" name="localDatabasePathLineEdit"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="browseLocalDatabasePushButton">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="songbookProManagerTab">
-      <attribute name="title">
-       <string>SongbookPro Manager</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <layout class="QFormLayout" name="songbookProManagerFormLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="songbookProManagerURLLabel">
-           <property name="text">
-            <string>URL:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="urlHorizontalLayout">
-           <item>
-            <widget class="QLabel" name="httpLabel">
+       </widget>
+       <widget class="QWidget" name="songbookProManagerTab">
+        <attribute name="title">
+         <string>SongbookPro Manager</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <layout class="QFormLayout" name="songbookProManagerFormLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="songbookProManagerURLLabel">
              <property name="text">
-              <string>http://</string>
+              <string>URL:</string>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QLineEdit" name="ipAddressLineEdit"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="colonLabel">
-             <property name="text">
-              <string>:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="portLineEdit"/>
+           <item row="0" column="1">
+            <layout class="QHBoxLayout" name="urlHorizontalLayout">
+             <item>
+              <widget class="QLabel" name="httpLabel">
+               <property name="text">
+                <string>http://</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="ipAddressLineEdit"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="colonLabel">
+               <property name="text">
+                <string>:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="portLineEdit"/>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+   <item>
+    <widget class="Line" name="secondLine">
+     <property name="orientation">
+      <enum>Qt::Orientation::Horizontal</enum>
+     </property>
     </widget>
    </item>
+
+   <item>
+    <layout class="QVBoxLayout" name="setConfigurationSectionVerticalLayout">
+     <item>
+      <widget class="QLabel" name="databaseConfigurationLabel">
+       <property name="styleSheet">
+        <string notr="true">font-size: 16px; font-weight: bold;</string>
+       </property>
+       <property name="text">
+        <string>Set configuration</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QFormLayout" name="setConfigurationFormLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="setNameLabel">
+         <property name="text">
+          <string>Set name:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="setNameLineEdit"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+
    <item>
     <widget class="QPushButton" name="createSetpushButton">
      <property name="text">
@@ -250,6 +305,7 @@
      </property>
     </widget>
    </item>
+
   </layout>
  </widget>
  <resources/>
