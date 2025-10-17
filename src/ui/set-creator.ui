@@ -7,14 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>401</width>
-    <height>375</height>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Set Creator</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
-
    <item>
     <layout class="QVBoxLayout" name="repertoireDataSourceSectionVerticalLayout">
      <item>
@@ -156,7 +155,6 @@
      </item>
     </layout>
    </item>
-
    <item>
     <widget class="Line" name="firstLine">
      <property name="orientation">
@@ -164,7 +162,6 @@
      </property>
     </widget>
    </item>
-
    <item>
     <layout class="QVBoxLayout" name="databaseConfigurationSectionVerticalLayout">
      <item>
@@ -260,7 +257,6 @@
      </item>
     </layout>
    </item>
-
    <item>
     <widget class="Line" name="secondLine">
      <property name="orientation">
@@ -268,7 +264,6 @@
      </property>
     </widget>
    </item>
-
    <item>
     <layout class="QVBoxLayout" name="setConfigurationSectionVerticalLayout">
      <item>
@@ -297,7 +292,6 @@
      </item>
     </layout>
    </item>
-
    <item>
     <widget class="QPushButton" name="createSetpushButton">
      <property name="text">
@@ -305,7 +299,6 @@
      </property>
     </widget>
    </item>
-
   </layout>
  </widget>
  <resources/>
