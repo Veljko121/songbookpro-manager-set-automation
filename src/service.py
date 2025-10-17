@@ -4,16 +4,6 @@ from database_song_repository import DatabaseSongRepository
 
 class Service:
 
-    # 1. UI: I want a Google Sheets reader. Here's necessary stuff (path to credentials, URL, sheet name)
-    # 2. Backend: Okay, let me check if that is possible
-    #       - credentials good?
-    #           - yes
-    #    Okay, let me get all songs from the spreadsheet
-    #    Okay, let me setup
-
-    # 1. load song names from the repertoire
-    # 2. find songs from the database by those names (check if each one exists)
-
     def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict, set_name: str):
         if sheets_selection == 0: # Google Sheets
             self.repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_url"], sheets_params["sheet"])
