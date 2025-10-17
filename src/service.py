@@ -1,3 +1,4 @@
+import sqlite3
 from google_sheets_repertoire_repository import GoogleSheetsRepertoireRepository
 from database_song_repository import DatabaseSongRepository
 
@@ -13,7 +14,7 @@ class Service:
     # 1. load song names from the repertoire
     # 2. find songs from the database by those names (check if each one exists)
 
-    def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict):
+    def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict, set_name: str):
         if sheets_selection == 0: # Google Sheets
             self.repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_url"], sheets_params["sheet"])
         elif sheets_selection == 1: # Local spreadsheets
@@ -22,14 +23,16 @@ class Service:
             raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
         
         if database_selection == 0: # SQLite database
-            self.song_repository = DatabaseSongRepository(database_params["database_path"])
+            database_client = sqlite3.connect(database_params["database_path"])
+            database_client.row_factory = sqlite3.Row
+            self.song_repository = DatabaseSongRepository(database_client)
         elif database_selection == 1: # SongbookPro Manager
             pass # TODO
         else:
             raise ValueError(f"Database method selection not valid - selected {database_selection}. Value should be either 0 or 1.")
 
         repertoire_songs = self.repertoire_repository.get_songs()
-        song = self.song_repository.find_by_name("Marija (Divlje Jagode)")
+        songs = self.song_repository.find_all_by_names([repertoire_song[0] for repertoire_song in repertoire_songs])
         
 if __name__ == "__main__":
     service = Service()
@@ -43,4 +46,4 @@ if __name__ == "__main__":
     database_params = {
         "database_path": "/home/veljko/.wine/drive_c/users/veljko/AppData/Roaming/Songbook Systems/SongbookPro/songs.db"
     }
-    service.create_set(sheets_selection, sheets_params, database_selection, database_params)
+    service.create_set(sheets_selection, sheets_params, database_selection, database_params, "Pub 21465")
