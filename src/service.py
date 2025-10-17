@@ -1,28 +1,43 @@
 import sqlite3
 from google_sheets_repertoire_repository import GoogleSheetsRepertoireRepository
 from database_song_repository import DatabaseSongRepository
+from database_set_repository import DatabaseSetRepository
+from set_item import SetItem
+from set import Set
 
 class Service:
 
     def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict, set_name: str):
+        self.repertoire_repository = self._initialize_repertoire_repository(sheets_selection, sheets_params)
+        self.song_repository, self.set_repository = self._initialize_database_repositories(database_selection, database_params)
+
+        repertoire_songs = self.repertoire_repository.get_songs()
+        songs = self.song_repository.find_all_by_names([repertoire_song[0] for repertoire_song in repertoire_songs])
+        set_items = [SetItem(song, repertoire_song[1]) for (song, repertoire_song) in zip(songs, repertoire_songs)]
+        set = Set(set_name, set_items)
+        self.set_repository.save(set)
+
+    def _initialize_repertoire_repository(self, sheets_selection: int, sheets_params: dict):
         if sheets_selection == 0: # Google Sheets
-            self.repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_url"], sheets_params["sheet"])
+            repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_url"], sheets_params["sheet"])
+            return repertoire_repository
         elif sheets_selection == 1: # Local spreadsheets
             pass # TODO
         else:
             raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
-        
+    
+    def _initialize_database_repositories(self, database_selection: int, database_params):
         if database_selection == 0: # SQLite database
             database_client = sqlite3.connect(database_params["database_path"])
             database_client.row_factory = sqlite3.Row
-            self.song_repository = DatabaseSongRepository(database_client)
+            song_repository = DatabaseSongRepository(database_client)
+            set_repository = DatabaseSetRepository(database_client)
+            return song_repository, set_repository
         elif database_selection == 1: # SongbookPro Manager
             pass # TODO
         else:
             raise ValueError(f"Database method selection not valid - selected {database_selection}. Value should be either 0 or 1.")
 
-        repertoire_songs = self.repertoire_repository.get_songs()
-        songs = self.song_repository.find_all_by_names([repertoire_song[0] for repertoire_song in repertoire_songs])
         
 if __name__ == "__main__":
     service = Service()
