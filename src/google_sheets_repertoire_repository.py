@@ -1,6 +1,9 @@
 import gspread
 from set_item import SetItem
 
+def format_song_name(name: str):
+    return name.strip().replace("‘", "'").replace("’", "'")
+
 class GoogleSheetsRepertoireRepository:
 
     def __init__(self, credentials_path: str, spreadsheet_url: str, sheet: str):
@@ -10,7 +13,7 @@ class GoogleSheetsRepertoireRepository:
 
     def get_songs(self, songs_column: int = 1):
         return [
-            (song_name, key) 
+            (format_song_name(song_name), key) 
             for song_name, key
             in zip(self.sheet.col_values(songs_column), self.sheet.col_values(songs_column + 1))
         ]
