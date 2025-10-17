@@ -36,7 +36,7 @@ if __name__ == "__main__":
     sheets_selection = 0
     database_selection = 0
     sheets_params = {
-        "credentials_path": "resources/credentials.json",
+        "credentials_path": "resources/credentials/credentials.json",
         "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1Sx-4TBd1RZTSTZj4V9cFGHGp50JtzlnsLb8UixmIy7U/edit?gid=1836157840#gid=1836157840",
         "sheet": "Cohiba"
     }
