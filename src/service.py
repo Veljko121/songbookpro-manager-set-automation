@@ -7,6 +7,7 @@ class Service:
     #       - credentials good?
     #           - yes
     #    Okay, let me get all songs from the spreadsheet
+    #    Okay, let me setup
 
     # 1. load song names from the repertoire
     # 2. find songs from the database by those names (check if each one exists)
@@ -18,6 +19,8 @@ class Service:
             pass
         else:
             raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
+
+        repertoire_songs = self.repertoire_repository.get_songs()
         
 
         
