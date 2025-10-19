@@ -17,7 +17,7 @@ class SetCreator(QWidget):
         # Service initialization
         self.service = Service()
 
-        # UI singals setup
+        # Signals setup
         self._connect_actions()
 
         self.adjustSize()
@@ -27,7 +27,7 @@ class SetCreator(QWidget):
         self.ui.spreadsheetsComboBox.currentIndexChanged.connect(self.update_sheets)
 
     def browse_credentials(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open Spreadsheet", "", "Credentials JSON (*.json)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", "", "Credentials JSON (*.json)")
         if file_path:
             self.ui.credentialsPathLineEdit.setText(file_path)
             spreadsheets = self.service.get_available_google_spreadsheets(self.ui.credentialsPathLineEdit.text())
