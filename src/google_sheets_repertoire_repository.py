@@ -34,14 +34,11 @@ def format_song_name(name: str):
 
 class GoogleSheetsRepertoireRepository:
 
-    def __init__(self, credentials_path: str, spreadsheet_url: str, sheet: str):
-        self.client = gspread.auth.service_account(credentials_path)
-        self.spreadsheet = self.client.open_by_url(spreadsheet_url)
-        self.sheet = self.spreadsheet.worksheet(sheet)
+    def __init__(self, google_sheets_client: gspread.client.Client):
+        self.client = google_sheets_client
 
-    def get_songs(self, songs_column: int = 1):
-        return [
-            (format_song_name(song_name), keys[key]) 
-            for song_name, key
-            in zip(self.sheet.col_values(songs_column), self.sheet.col_values(songs_column + 1))
-        ]
+    def get_available_spreadsheets(self):
+        return self.client.openall()
+    
+    def get_sheets(self, spreadsheet_id: str):
+        return self.client.open_by_key(spreadsheet_id).worksheets()

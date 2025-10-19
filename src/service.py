@@ -4,8 +4,25 @@ from database_song_repository import DatabaseSongRepository
 from database_set_repository import DatabaseSetRepository
 from set_item import SetItem
 from set import Set
+import gspread
 
 class Service:
+
+    def __init__(self):
+        self.credentials_path = None
+        self.google_sheets_client = None
+
+    def get_available_google_spreadsheets(self, credentials_path: str):
+        if self.credentials_path and self.credentials_path != credentials_path:
+            self.credentials_path = credentials_path
+        if not self.google_sheets_client:
+            self.google_sheets_client = gspread.auth.service_account(credentials_path)
+        self.google_sheets_repertoire_repository = GoogleSheetsRepertoireRepository(self.google_sheets_client)
+        return self.google_sheets_repertoire_repository.get_available_spreadsheets()
+    
+    def get_sheets(self, sheets_selection: int, sheets_params: dict):
+        if sheets_selection == 0:
+            return self.google_sheets_repertoire_repository.get_sheets(sheets_params["spreadsheet_id"])
 
     def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict, set_name: str):
         self.repertoire_repository = self._initialize_repertoire_repository(sheets_selection, sheets_params)
@@ -19,7 +36,7 @@ class Service:
 
     def _initialize_repertoire_repository(self, sheets_selection: int, sheets_params: dict):
         if sheets_selection == 0: # Google Sheets
-            repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_url"], sheets_params["sheet"])
+            repertoire_repository = GoogleSheetsRepertoireRepository(sheets_params["credentials_path"], sheets_params["spreadsheet_id"], sheets_params["sheet"])
             return repertoire_repository
         elif sheets_selection == 1: # Local spreadsheets
             pass # TODO
@@ -45,7 +62,7 @@ if __name__ == "__main__":
     database_selection = 0
     sheets_params = {
         "credentials_path": "resources/credentials/credentials.json",
-        "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1Sx-4TBd1RZTSTZj4V9cFGHGp50JtzlnsLb8UixmIy7U/edit?gid=1836157840#gid=1836157840",
+        "spreadsheet_id": "https://docs.google.com/spreadsheets/d/1Sx-4TBd1RZTSTZj4V9cFGHGp50JtzlnsLb8UixmIy7U/edit?gid=1836157840#gid=1836157840",
         "sheet": "Cohiba"
     }
     database_params = {
