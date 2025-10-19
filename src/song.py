@@ -1,4 +1,5 @@
 class Song:
+    
     def __init__(self, id: int, name: str, key: int, subtitle: str, key_shift: int):
         self.id = id
         self.name = name
