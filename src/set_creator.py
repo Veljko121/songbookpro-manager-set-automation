@@ -25,6 +25,19 @@ class SetCreator(QWidget):
     def _connect_actions(self):
         self.ui.browseCredentialsPushButton.clicked.connect(self.browse_credentials)
         self.ui.spreadsheetsComboBox.currentIndexChanged.connect(self.update_sheets)
+        self.ui.repertoireTabWidget.currentChanged.connect(self.repertoire_tab_changed)
+
+    def repertoire_tab_changed(self):
+        sheets_selection = self.ui.repertoireTabWidget.currentIndex()
+        if sheets_selection == 0:
+            self.load_google_repertoires()
+
+    def load_google_repertoires(self):
+        credentials_path = self.ui.credentialsPathLineEdit.text()
+        if credentials_path:
+            spreadsheets = self.spreadsheets
+            if not spreadsheets:
+                spreadsheets = self.service.get_available_google_spreadsheets(credentials_path)
 
     def browse_credentials(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", "", "Credentials JSON (*.json)")
@@ -42,6 +55,8 @@ class SetCreator(QWidget):
             sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), { "spreadsheet_id": self.ui.spreadsheetsComboBox.currentData() })
             for sheet in sheets:
                 self.ui.sheetsComboBox.addItem(sheet.title, sheet.id)
+        elif sheets_selection == 1:
+            pass # TODO: local sheets
 
 if __name__ == "__main__":
     import sys
