@@ -25,10 +25,10 @@ class Service:
             return self.google_sheets_repertoire_repository.get_sheets(sheets_params["spreadsheet_id"])
 
     def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict, set_name: str):
-        self.repertoire_repository = self._initialize_repertoire_repository(sheets_selection, sheets_params)
+        # self.repertoire_repository = self._initialize_repertoire_repository(sheets_selection, sheets_params)
         self.song_repository, self.set_repository = self._initialize_database_repositories(database_selection, database_params)
 
-        repertoire_songs = self.repertoire_repository.get_songs()
+        repertoire_songs = self.google_sheets_repertoire_repository.get_songs(sheets_params["spreadsheet_id"], sheets_params["sheet"])
         songs = self.song_repository.find_all_by_names([repertoire_song[0] for repertoire_song in repertoire_songs])
         set_items = [SetItem(song, repertoire_song[1]) for (song, repertoire_song) in zip(songs, repertoire_songs)]
         set = Set(set_name, set_items)

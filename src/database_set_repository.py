@@ -15,7 +15,7 @@ class DatabaseSetRepository:
         finally:
             cursor.close()
 
-    def _save_set_items(set_items: list, cursor: Cursor):
+    def _save_set_items(self, set_items: list, cursor: Cursor):
         set_id = cursor.lastrowid
-        values = [(0, order, set_id, item.song.id, item.key_offset()) for order, item in enumerate(set.items)]
+        values = [(0, order, set_id, item.song.id, item.key_offset()) for order, item in enumerate(set_items)]
         cursor.executemany("INSERT INTO setitems(Capo, \"Order\", SetId, SongId, keyOfset, ModifiedDateTime)VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))", values)

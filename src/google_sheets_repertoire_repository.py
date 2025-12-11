@@ -42,3 +42,19 @@ class GoogleSheetsRepertoireRepository:
     
     def get_sheets(self, spreadsheet_id: str):
         return self.client.open_by_key(spreadsheet_id).worksheets()
+
+    def get_songs(self, spreadsheet_id: str, sheet: str):
+            worksheet = self.client.open_by_key(spreadsheet_id).worksheet(sheet)
+    
+            # Get all values from columns A and B
+            all_values = worksheet.get('A:B')
+            
+            songs = []
+            for row in all_values:
+                # Skip empty rows
+                if len(row) >= 2 and row[0] and row[1]:
+                    song_name = format_song_name(row[0])
+                    key = row[1].strip()
+                    songs.append((song_name, keys[key]))
+            
+            return songs
