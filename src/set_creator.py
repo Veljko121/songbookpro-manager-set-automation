@@ -28,6 +28,8 @@ class SetCreator(QWidget):
         self.ui.browseCredentialsPushButton.clicked.connect(self.browse_credentials)
         self.ui.googleSpreadsheetsComboBox.currentIndexChanged.connect(self.update_google_sheets)
 
+        self.ui.browseLocalDatabasePushButton.clicked.connect(self.browse_sqlite_database)
+
     def browse_credentials(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", "", "Credentials JSON (*.json)")
         if file_path:
@@ -42,6 +44,11 @@ class SetCreator(QWidget):
         sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), { "spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData() })
         for sheet in sheets:
             self.ui.googleSheetsComboBox.addItem(sheet.title, sheet.id)
+
+    def browse_sqlite_database(self):
+        database_path, _ = QFileDialog.getOpenFileName(self, "Open local database", "", "Database (*.db)")
+        if database_path:
+            self.ui.localDatabasePathLineEdit.setText(database_path)
 
 if __name__ == "__main__":
     import sys
