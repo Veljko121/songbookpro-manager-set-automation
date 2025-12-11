@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>401</width>
-    <height>456</height>
+    <height>462</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,14 +69,31 @@
             </layout>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="spreadsheetsLabel">
+            <widget class="QLabel" name="googleSpreadsheetsLabel">
              <property name="text">
               <string>Spreadsheet:</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QComboBox" name="spreadsheetsComboBox">
+            <widget class="QComboBox" name="googleSpreadsheetsComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="googleSheetsLabel">
+             <property name="text">
+              <string>Sheet:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="googleSheetsComboBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -120,6 +137,23 @@
              </item>
             </layout>
            </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="localSheetsLabel">
+             <property name="text">
+              <string>Sheet:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="localSheetsComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -127,25 +161,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="sheetsLabel">
-         <property name="text">
-          <string>Sheet:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="sheetsComboBox">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <layout class="QFormLayout" name="formLayout"/>
      </item>
     </layout>
    </item>
