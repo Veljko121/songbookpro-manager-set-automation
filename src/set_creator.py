@@ -3,7 +3,6 @@ from PyQt6.QtWidgets import QWidget, QApplication, QFileDialog
 from PyQt6.QtGui import QKeySequence, QShortcut
 from service import Service
 
-# 
 
 class SetCreator(QWidget):
     
