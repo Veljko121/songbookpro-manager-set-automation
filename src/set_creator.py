@@ -1,5 +1,5 @@
 from ui.ui_set_creator import Ui_SetCreator
-from PyQt6.QtWidgets import QWidget, QApplication, QFileDialog
+from PyQt6.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
 from PyQt6.QtGui import QKeySequence, QShortcut
 from service import Service
 
@@ -42,7 +42,7 @@ class SetCreator(QWidget):
     
     def update_google_sheets(self):
         self.ui.googleSheetsComboBox.clear()
-        sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), { "spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData() })
+        sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), self.ui.googleSpreadsheetsComboBox.currentData())
         for sheet in sheets:
             self.ui.googleSheetsComboBox.addItem(sheet.title, sheet.id)
 
@@ -52,18 +52,44 @@ class SetCreator(QWidget):
             self.ui.localDatabasePathLineEdit.setText(database_path)
         
     def create_set(self):
+
+        # sheets config
         sheets_selection = self.ui.repertoireTabWidget.currentIndex()
         sheets_params = {
-            "credentials_path": self.ui.credentialsPathLineEdit.text(),
-            "spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData(),
-            "sheet": self.ui.googleSheetsComboBox.currentText(),
+            "google_credentials_path": self.ui.credentialsPathLineEdit.text(),
+            "google_spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData(),
+            "google_sheet": self.ui.googleSheetsComboBox.currentText(),
+            "local_spreadsheet_path": self.ui.localDatabasePathLineEdit.text(),
+            "local_sheet": self.ui.localSheetsComboBox.currentText(),
         }
+
+        # database config
         database_selection =self.ui.databaseTabWidget.currentIndex()
         database_params = {
-            "database_path": self.ui.localDatabasePathLineEdit.text()
+            "local_database_path": self.ui.localDatabasePathLineEdit.text(),
+            "songbookpro_manager_ip_address": self.ui.ipAddressLineEdit.text(),
+            "songbookpro_manager_port": self.ui.portLineEdit.text(),
         }
+
+        # set config
         set_name = self.ui.setNameLineEdit.text()
-        self.service.create_set(sheets_selection, sheets_params, database_selection, database_params, set_name)
+
+        try:
+            self.service.create_set(sheets_selection, sheets_params, database_selection, database_params, set_name)
+            msg_box = QMessageBox(self)
+            msg_box.setIcon(QMessageBox.Icon.Information)
+            msg_box.setWindowTitle("Success")
+            msg_box.setText(f"Set {set_name} created successfully.")
+            msg_box.exec()
+        except:
+            self.show_error_message("Failed to create set. Please try again.")
+            
+    def show_error_message(self, message):
+        msg_box = QMessageBox(self)
+        msg_box.setIcon(QMessageBox.Icon.Critical)
+        msg_box.setWindowTitle("Error")
+        msg_box.setText(message)
+        msg_box.exec()
 
 if __name__ == "__main__":
     import sys
