@@ -52,7 +52,6 @@ class SetCreator(QWidget):
             self.ui.localDatabasePathLineEdit.setText(database_path)
         
     def create_set(self):
-
         # sheets config
         sheets_selection = self.ui.repertoireTabWidget.currentIndex()
         sheets_params = {
