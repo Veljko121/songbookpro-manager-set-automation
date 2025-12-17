@@ -76,19 +76,15 @@ class SetCreator(QWidget):
 
         try:
             self.service.create_set(sheets_selection, sheets_params, database_selection, database_params, set_name)
-            msg_box = QMessageBox(self)
-            msg_box.setIcon(QMessageBox.Icon.Information)
-            msg_box.setWindowTitle("Success")
-            msg_box.setText(f"Set {set_name} created successfully.")
-            msg_box.exec()
+            self.show_message(QMessageBox.Icon.Information, "Success", f"Set {set_name} created successfully.")
         except:
-            self.show_error_message("Failed to create set. Please try again.")
-            
-    def show_error_message(self, message):
+            self.show_message(QMessageBox.Icon.Critical, "Error", "Failed to create set. Please try again.")
+
+    def show_message(self, message_type: QMessageBox.Icon, message_title: str, message_content: str):
         msg_box = QMessageBox(self)
-        msg_box.setIcon(QMessageBox.Icon.Critical)
-        msg_box.setWindowTitle("Error")
-        msg_box.setText(message)
+        msg_box.setIcon(message_type)
+        msg_box.setWindowTitle(message_title)
+        msg_box.setText(message_content)
         msg_box.exec()
 
 if __name__ == "__main__":
