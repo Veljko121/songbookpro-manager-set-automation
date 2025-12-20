@@ -26,9 +26,7 @@ class SetCreator(QWidget):
     def _connect_actions(self):
         self.ui.browseCredentialsPushButton.clicked.connect(self.browse_credentials)
         self.ui.googleSpreadsheetsComboBox.currentIndexChanged.connect(self.update_google_sheets)
-
         self.ui.browseLocalDatabasePushButton.clicked.connect(self.browse_sqlite_database)
-
         self.ui.createSetpushButton.clicked.connect(self.create_set)
 
     def browse_credentials(self):
@@ -60,6 +58,8 @@ class SetCreator(QWidget):
             "google_sheet": self.ui.googleSheetsComboBox.currentText(),
             "local_spreadsheet_path": self.ui.localDatabasePathLineEdit.text(),
             "local_sheet": self.ui.localSheetsComboBox.currentText(),
+            "song_names_column": int(self.ui.columnDefinitionSongNamesSpinBox.text()),
+            "keys_column": int(self.ui.columnDefinitionKeysSpinBox.text())
         }
 
         # database config
@@ -76,8 +76,8 @@ class SetCreator(QWidget):
         try:
             self.service.create_set(sheets_selection, sheets_params, database_selection, database_params, set_name)
             self.show_message(QMessageBox.Icon.Information, "Success", f"Set '{set_name}' created successfully.")
-        except:
-            self.show_message(QMessageBox.Icon.Critical, "Error", f"Failed to create set '{set_name}'. Please try again.")
+        except ValueError as e:
+            self.show_message(QMessageBox.Icon.Critical, "Error", str(e))
 
     def show_message(self, message_type: QMessageBox.Icon, message_title: str, message_content: str):
         msg_box = QMessageBox(self)
