@@ -2,6 +2,8 @@ from ui.ui_set_creator import Ui_SetCreator
 from PyQt6.QtWidgets import QWidget, QApplication, QFileDialog, QMessageBox
 from PyQt6.QtGui import QKeySequence, QShortcut
 from service import Service
+from properties_handler import PropertiesHandler
+import os
 
 
 class SetCreator(QWidget):
@@ -21,6 +23,10 @@ class SetCreator(QWidget):
         # Signals setup
         self._connect_actions()
 
+        # Properties handler
+        self.properties_handler = PropertiesHandler()
+        self._load_properties()
+
         self.adjustSize()
 
     def _connect_actions(self):
@@ -29,10 +35,37 @@ class SetCreator(QWidget):
         self.ui.browseLocalDatabasePushButton.clicked.connect(self.browse_sqlite_database)
         self.ui.createSetpushButton.clicked.connect(self.create_set)
 
+    def _load_properties(self):
+        credentials_path = self.properties_handler.get_property("GOOGLE_CREDENTIALS_PATH")
+        self.ui.credentialsPathLineEdit.setText(credentials_path)
+        # self._load_credentials(credentials_path)
+        # self.ui.googleSheetsComboBox.setCurrentText(self.properties_handler.get_property("GOOGLE_SHEET"))
+        # self.ui.googleSpreadsheetsComboBox.setCurrentText(self.properties_handler.get_property("GOOGLE_SPREADSHEETS"))
+
+        self.ui.spreadsheetPathLineEdit.setText(self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH"))
+        # self.ui.localSheetsComboBox.setCurrentText(self.properties_handler.get_property("LOCAL_SHEET"))
+
+        self.ui.columnDefinitionSongNamesSpinBox.setValue(int(self.properties_handler.get_property("SONG_NAMES_COLUMN") if self.properties_handler.get_property("KEYS_COLUMN") else 1))
+        self.ui.columnDefinitionKeysSpinBox.setValue(int(self.properties_handler.get_property("KEYS_COLUMN") if self.properties_handler.get_property("KEYS_COLUMN") else 2))
+
+        self.ui.localDatabasePathLineEdit.setText(self.properties_handler.get_property("LOCAL_DATABASE_PATH"))
+
+        self.ui.ipAddressLineEdit.setText(self.properties_handler.get_property("SONGBOOKPRO_MANAGER_IP_ADDRESS"))
+        self.ui.portLineEdit.setText(self.properties_handler.get_property("SONGBOOKPRO_MANAGER_PORT"))
+
+        self.ui.setNameLineEdit.setText(self.properties_handler.get_property("SET_NAME"))
+    
     def browse_credentials(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", "./resources/credentials", "Credentials JSON (*.json)")
-        if file_path:
-            self.ui.credentialsPathLineEdit.setText(file_path)
+        cached_path: str = self.properties_handler.get_property("GOOGLE_CREDENTIALS_PATH")
+        if cached_path:
+            directory = cached_path
+            directory = os.path.expanduser("~")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", directory, "Credentials JSON (*.json)")
+        self._load_credentials(file_path)
+
+    def _load_credentials(self, credentials_path: str):
+        if credentials_path:
+            self.ui.credentialsPathLineEdit.setText(credentials_path)
             spreadsheets = self.service.get_available_google_spreadsheets(self.ui.credentialsPathLineEdit.text())
             self.ui.googleSpreadsheetsComboBox.clear()
             for spreadsheet in spreadsheets:
