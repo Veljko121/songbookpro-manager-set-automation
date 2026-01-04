@@ -7,5 +7,8 @@ class SetItem:
         self.set_key = set_key
 
     def key_offset(self):
-        distance = 12 - (self.song.key - self.set_key) if self.song.key > self.set_key else self.set_key - self.song.key
+        if self.song.key > self.set_key:
+            distance = 12 - (self.song.key - self.set_key)
+        else:
+            distance = self.set_key - self.song.key
         return distance
