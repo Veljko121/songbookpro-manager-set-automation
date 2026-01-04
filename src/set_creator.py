@@ -54,13 +54,11 @@ class SetCreator(QWidget):
         self.ui.portLineEdit.setText(self.properties_handler.get_property("SONGBOOKPRO_MANAGER_PORT"))
 
         self.ui.setNameLineEdit.setText(self.properties_handler.get_property("SET_NAME"))
-    
+
     def browse_credentials(self):
         cached_path: str = self.properties_handler.get_property("GOOGLE_CREDENTIALS_PATH")
-        if cached_path:
-            directory = cached_path
-            directory = os.path.expanduser("~")
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", directory, "Credentials JSON (*.json)")
+        path = cached_path if cached_path else os.path.expanduser("~")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", path, "Credentials JSON (*.json)")
         self._load_credentials(file_path)
 
     def _load_credentials(self, credentials_path: str):
