@@ -3,15 +3,14 @@ from properties_handler import PropertiesHandler
 
 def main():
     properties_handler = PropertiesHandler()
-    properties = properties_handler.load_properties()
         
     try:
-        run(properties["IP_ADDRESS"], properties["SPREADSHEET_PATH"], properties["SHEET"], properties["SET_NAME"])
+        run(properties_handler.get_property("IP_ADDRESS"), properties_handler.get_property("SPREADSHEET_PATH"), properties_handler.get_property("SHEET"), properties_handler.get_property("SET_NAME"))
     except FileNotFoundError:
-        print("Spreadsheet '" + properties["SPREADSHEET_PATH"] + "' doesn't seem to exist. Try again.")
+        print("Spreadsheet '" + properties_handler.get_property("SPREADSHEET_PATH") + "' doesn't seem to exist. Try again.")
         exit(1)
     except KeyError:
-        print("Worksheet '" + properties["SHEET"] + "' doesn't seem to exist. Try again.")
+        print("Worksheet '" + properties_handler.get_property("SHEET") + "' doesn't seem to exist. Try again.")
         exit(1)
     except ValueError as e:
         print(str(e))

@@ -192,12 +192,11 @@ class CreateSet(QWidget):
         self.properties_handler.save_properties(properties)
 
     def load_cached_properties(self):
-        properties = self.properties_handler.load_properties()
-        self.ui.ipAddressLineEdit.setText(properties.get("IP_ADDRESS", ""))
-        self.ui.spreadsheetPathLineEdit.setText(properties.get("SPREADSHEET_PATH", ""))
+        self.ui.ipAddressLineEdit.setText(self.properties_handler.get_property("IP_ADDRESS"))
+        self.ui.spreadsheetPathLineEdit.setText(self.properties_handler.get_property("SPREADSHEET_PATH"))
         self.update_sheets()
-        self.ui.sheetNameComboBox.setCurrentText(properties.get("SHEET", ""))
-        self.ui.setNameLineEdit.setText(properties.get("SET_NAME", ""))
+        self.ui.sheetNameComboBox.setCurrentText(self.properties_handler.get_property("SHEET"))
+        self.ui.setNameLineEdit.setText(self.properties_handler.get_property("SET_NAME"))
 
 
 if __name__ == "__main__":
