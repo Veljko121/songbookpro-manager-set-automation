@@ -27,6 +27,10 @@ class SetCreator(QWidget):
         self.properties_handler = PropertiesHandler()
         self._load_properties()
 
+        # Song and key columns setup
+        self.ui.columnDefinitionSongNamesSpinBox.setValue(1)
+        self.ui.columnDefinitionKeysSpinBox.setValue(2)
+
         self.adjustSize()
 
     def _connect_actions(self):
