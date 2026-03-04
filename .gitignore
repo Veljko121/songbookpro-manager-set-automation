@@ -1,3 +1,7 @@
+# User stuff
+*.properties
+*credentials/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
