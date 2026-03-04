@@ -8,6 +8,7 @@ class PropertiesHandler():
         self._load_properties()
 
     def _check_properties_file(self):
+        os.makedirs(os.path.dirname(self.properties_path), exist_ok=True)
         if not os.path.exists(self.properties_path):
             open(self.properties_path, "w", encoding="utf-8").close()
 
