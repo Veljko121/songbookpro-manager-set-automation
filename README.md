@@ -1,7 +1,4 @@
 # Setup/installation
-There are multiple ways of setting up the environment, most notably:
-1. Python virtual environment
-2. Installing necessary APT packages (Debian based distro's)
 
 ## Virtual environment
 First prepare the environment:
@@ -11,18 +8,11 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Now you can run the app:
+Now you can run the app using a script:
 ```
-python gui.py
+./run.sh
 ```
-
-## Installing APT packages (Debian based distro's)
-First install necessary APT packages:
+Or by running the source Python script manually
 ```
-sudo apt install python3-openpyxl python3-pyqt6 python3-requests
-```
-
-Now you can run the app:
-```
-python3 gui.py
+python src/set_creator.py
 ```
