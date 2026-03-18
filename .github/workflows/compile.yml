@@ -13,12 +13,12 @@ jobs:
     strategy:
       matrix:
         include:
-            - os: ubuntu-latest
-              artifact-name: app-linux
-              executable: dist/set-creator
-            - os: windows-latest
-              artifact-name: app-windows
-              executable: dist/set-creator.exe
+          - os: ubuntu-latest
+            artifact-name: app-linux
+            executable: dist/set-creator
+          - os: windows-latest
+            artifact-name: app-windows
+            executable: dist/set-creator.exe
 
     steps:
       - name: Checkout repository
@@ -42,3 +42,25 @@ jobs:
         with:
           name: ${{ matrix.artifact-name }}
           path: ${{ matrix.executable }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          files: |
+            artifacts/app-linux/set-creator
+            artifacts/app-windows/set-creator.exe
