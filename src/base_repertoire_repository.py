@@ -35,29 +35,35 @@ def format_song_name(name: str):
 
 class BaseRepertoireRepository(ABC):
     
-    def get_songs(self, song_names_column: int, keys_column: int) -> List[Tuple[str, int]]:
+    def get_songs(self, song_names_column: int, keys_column: int, notes_column: int) -> List[Tuple[str, int]]:
         """Template method that defines the algorithm structure."""
-        self._validate_column_parameters(song_names_column, keys_column)
-        song_names, song_keys = self._fetch_columns(song_names_column, keys_column)
-        return self._process_song_data(song_names, song_keys)
+        self._validate_column_parameters(song_names_column, keys_column, notes_column)
+        song_names, song_keys, notes = self._fetch_columns(song_names_column, keys_column, notes_column)
+        return self._process_song_data(song_names, song_keys, notes)
     
-    def _validate_column_parameters(self, song_names_column: int, keys_column: int):
+    def _validate_column_parameters(self, song_names_column: int, keys_column: int, notes_column: int):
         """Validate that column parameters are valid."""
         if song_names_column <= 0:
             raise ValueError(f"Song names column value must be greater than 0 ({song_names_column}).")
         if keys_column <= 0:
             raise ValueError(f"Keys column value must be greater than 0 ({keys_column}).")
+        if notes_column <= 0:
+            raise ValueError(f"Notes column value must be greater than 0 ({notes_column}).")
         if song_names_column == keys_column:
             raise ValueError(f"Song names column value ({song_names_column}) and keys column value ({keys_column}) cannot be the same.")
+        if song_names_column == notes_column:
+            raise ValueError(f"Song names column value ({song_names_column}) and notes column value ({notes_column}) cannot be the same.")
+        if keys_column == notes_column:
+            raise ValueError(f"Keys column value ({keys_column}) and notes column value ({notes_column}) cannot be the same.")
     
     @abstractmethod
-    def _fetch_columns(self, song_names_column: int, keys_column: int) -> Tuple[List[str], List[str]]:
-        """Fetch the song names and keys columns from the data source."""
+    def _fetch_columns(self, song_names_column: int, keys_column: int, notes_column: int) -> Tuple[List[str], List[str], List[str]]:
+        """Fetch the song names, keys and notes columns from the data source."""
         pass
     
-    def _process_song_data(self, song_names: List[str], song_keys: List[str]) -> List[Tuple[str, int]]:
+    def _process_song_data(self, song_names: List[str], song_keys: List[str], notes: List[str]) -> List[Tuple[str, int, str]]:
         enumerated_rows = {}
-        for i, row in enumerate(zip(song_names, song_keys)):
+        for i, row in enumerate(zip(song_names, song_keys, notes)):
             if row[0]:
                 enumerated_rows[i] = row
 
@@ -75,6 +81,7 @@ class BaseRepertoireRepository(ABC):
         for _, row in enumerated_rows.items():
             song_name = format_song_name(row[0])
             key = row[1].strip()
-            songs.append((song_name, keys[key]))
+            note = row[2]
+            songs.append((song_name, keys[key], note))
         
         return songs

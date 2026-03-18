@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
+    <width>500</width>
     <height>502</height>
    </rect>
   </property>
@@ -175,7 +175,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>26</number>
+          <number>99</number>
          </property>
         </widget>
        </item>
@@ -192,10 +192,27 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>26</number>
+          <number>99</number>
          </property>
          <property name="value">
           <number>2</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="columnDefinitionNotesLabel">
+         <property name="text">
+          <string>Notes column:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="columnDefinitionNotesSpinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="value">
+          <number>3</number>
          </property>
         </widget>
        </item>

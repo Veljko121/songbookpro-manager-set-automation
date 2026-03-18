@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'xml/set-creator.ui'
+# Form implementation generated from reading ui file 'src/ui/xml/set-creator.ui'
 #
 # Created by: PyQt6 UI code generator 6.9.1
 #
@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_SetCreator(object):
     def setupUi(self, SetCreator):
         SetCreator.setObjectName("SetCreator")
-        SetCreator.resize(401, 502)
+        SetCreator.resize(500, 502)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(SetCreator)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.repertoireDataSourceSectionVerticalLayout = QtWidgets.QVBoxLayout()
@@ -107,7 +107,7 @@ class Ui_SetCreator(object):
         self.columnDefinitionHorizontalLayout.addWidget(self.columnDefinitionSongNamesLabel)
         self.columnDefinitionSongNamesSpinBox = QtWidgets.QSpinBox(parent=SetCreator)
         self.columnDefinitionSongNamesSpinBox.setMinimum(1)
-        self.columnDefinitionSongNamesSpinBox.setMaximum(26)
+        self.columnDefinitionSongNamesSpinBox.setMaximum(99)
         self.columnDefinitionSongNamesSpinBox.setObjectName("columnDefinitionSongNamesSpinBox")
         self.columnDefinitionHorizontalLayout.addWidget(self.columnDefinitionSongNamesSpinBox)
         self.columnDefinitionKeysLabel = QtWidgets.QLabel(parent=SetCreator)
@@ -115,10 +115,18 @@ class Ui_SetCreator(object):
         self.columnDefinitionHorizontalLayout.addWidget(self.columnDefinitionKeysLabel)
         self.columnDefinitionKeysSpinBox = QtWidgets.QSpinBox(parent=SetCreator)
         self.columnDefinitionKeysSpinBox.setMinimum(1)
-        self.columnDefinitionKeysSpinBox.setMaximum(26)
+        self.columnDefinitionKeysSpinBox.setMaximum(99)
         self.columnDefinitionKeysSpinBox.setProperty("value", 2)
         self.columnDefinitionKeysSpinBox.setObjectName("columnDefinitionKeysSpinBox")
         self.columnDefinitionHorizontalLayout.addWidget(self.columnDefinitionKeysSpinBox)
+        self.columnDefinitionNotesLabel = QtWidgets.QLabel(parent=SetCreator)
+        self.columnDefinitionNotesLabel.setObjectName("columnDefinitionNotesLabel")
+        self.columnDefinitionHorizontalLayout.addWidget(self.columnDefinitionNotesLabel)
+        self.columnDefinitionNotesSpinBox = QtWidgets.QSpinBox(parent=SetCreator)
+        self.columnDefinitionNotesSpinBox.setMinimum(1)
+        self.columnDefinitionNotesSpinBox.setProperty("value", 3)
+        self.columnDefinitionNotesSpinBox.setObjectName("columnDefinitionNotesSpinBox")
+        self.columnDefinitionHorizontalLayout.addWidget(self.columnDefinitionNotesSpinBox)
         self.repertoireDataSourceSectionVerticalLayout.addLayout(self.columnDefinitionHorizontalLayout)
         self.formLayout = QtWidgets.QFormLayout()
         self.formLayout.setObjectName("formLayout")
@@ -230,6 +238,7 @@ class Ui_SetCreator(object):
         self.repertoireTabWidget.setTabText(self.repertoireTabWidget.indexOf(self.localSpreadsheetTab), _translate("SetCreator", "Local spreadsheet"))
         self.columnDefinitionSongNamesLabel.setText(_translate("SetCreator", "Song names column:"))
         self.columnDefinitionKeysLabel.setText(_translate("SetCreator", "Keys column:"))
+        self.columnDefinitionNotesLabel.setText(_translate("SetCreator", "Notes column:"))
         self.databaseConfigurationLabel.setText(_translate("SetCreator", "Database configuration"))
         self.databasePathLabel.setText(_translate("SetCreator", "Path:"))
         self.browseLocalDatabasePushButton.setText(_translate("SetCreator", "..."))
