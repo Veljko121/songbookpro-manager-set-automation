@@ -11,7 +11,7 @@ SolidCompression=yes
 PrivilegesRequired=lowest
 
 [Files]
-Source: "dist\set-creator.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\dist\set-creator.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Set Creator"; Filename: "{app}\set-creator.exe"
