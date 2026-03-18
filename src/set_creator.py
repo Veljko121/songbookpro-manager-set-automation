@@ -27,10 +27,6 @@ class SetCreator(QWidget):
         self.properties_handler = PropertiesHandler()
         self._load_properties()
 
-        # Song and key columns setup
-        self.ui.columnDefinitionSongNamesSpinBox.setValue(1)
-        self.ui.columnDefinitionKeysSpinBox.setValue(2)
-
         self.adjustSize()
 
     def _connect_actions(self):
@@ -94,7 +90,8 @@ class SetCreator(QWidget):
             "local_spreadsheet_path": self.ui.localDatabasePathLineEdit.text(),
             "local_sheet": self.ui.localSheetsComboBox.currentText(),
             "song_names_column": int(self.ui.columnDefinitionSongNamesSpinBox.text()),
-            "keys_column": int(self.ui.columnDefinitionKeysSpinBox.text())
+            "keys_column": int(self.ui.columnDefinitionKeysSpinBox.text()),
+            "notes_column": int(self.ui.columnDefinitionKeysSpinBox.text()),
         }
 
         # database config

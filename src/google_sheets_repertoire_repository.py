@@ -56,4 +56,4 @@ class GoogleSheetsRepertoireRepository(BaseRepertoireRepository):
 if __name__ == "__main__":
     google_sheets_client = gspread.auth.service_account("./resources/credentials/credentials.json")
     repo = GoogleSheetsRepertoireRepository(google_sheets_client, "1Sx-4TBd1RZTSTZj4V9cFGHGp50JtzlnsLb8UixmIy7U", "Pub 21465")
-    songs = repo.get_songs(1, 2)
+    songs = repo.get_songs(1, 2, 3)

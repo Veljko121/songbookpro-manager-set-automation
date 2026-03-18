@@ -2,9 +2,10 @@ from song import Song
 
 class SetItem:
     
-    def __init__(self, song: Song, set_key: int):
+    def __init__(self, song: Song, set_key: int, notes: str):
         self.song = song
         self.set_key = set_key
+        self.notes = notes
 
     def key_offset(self):
         if self.song.key > self.set_key:
