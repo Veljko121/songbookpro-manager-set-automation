@@ -1,5 +1,8 @@
 from sqlite3 import Connection, Cursor
 from set import Set
+from typing import List
+from set_item import SetItem
+from song import Song
 
 class DatabaseSetRepository:
 
@@ -15,7 +18,7 @@ class DatabaseSetRepository:
         finally:
             cursor.close()
 
-    def _save_set_items(self, set_items: list, cursor: Cursor):
+    def _save_set_items(self, set_items: List[SetItem], cursor: Cursor):
         set_id = cursor.lastrowid
-        values = [(0, order, set_id, item.song.id, item.key_offset()) for order, item in enumerate(set_items)]
-        cursor.executemany("INSERT INTO setitems(Capo, \"Order\", SetId, SongId, keyOfset, ModifiedDateTime)VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))", values)
+        values = [(0, order, set_id, item.song.id, item.key_offset(), item.notes) for order, item in enumerate(set_items)]
+        cursor.executemany("INSERT INTO setitems(Capo, \"Order\", SetId, SongId, keyOfset, NotesText, ModifiedDateTime)VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))", values)

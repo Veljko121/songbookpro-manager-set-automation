@@ -45,8 +45,9 @@ class SetCreator(QWidget):
         self.ui.spreadsheetPathLineEdit.setText(self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH"))
         # self.ui.localSheetsComboBox.setCurrentText(self.properties_handler.get_property("LOCAL_SHEET"))
 
-        self.ui.columnDefinitionSongNamesSpinBox.setValue(int(self.properties_handler.get_property("SONG_NAMES_COLUMN") if self.properties_handler.get_property("KEYS_COLUMN") else 1))
+        self.ui.columnDefinitionSongNamesSpinBox.setValue(int(self.properties_handler.get_property("SONG_NAMES_COLUMN") if self.properties_handler.get_property("SONG_NAMES_COLUMN") else 1))
         self.ui.columnDefinitionKeysSpinBox.setValue(int(self.properties_handler.get_property("KEYS_COLUMN") if self.properties_handler.get_property("KEYS_COLUMN") else 2))
+        self.ui.columnDefinitionNotesSpinBox.setValue(int(self.properties_handler.get_property("NOTES_COLUMN") if self.properties_handler.get_property("NOTES_COLUMN") else 2))
 
         self.ui.localDatabasePathLineEdit.setText(self.properties_handler.get_property("LOCAL_DATABASE_PATH"))
 
@@ -91,7 +92,7 @@ class SetCreator(QWidget):
             "local_sheet": self.ui.localSheetsComboBox.currentText(),
             "song_names_column": int(self.ui.columnDefinitionSongNamesSpinBox.text()),
             "keys_column": int(self.ui.columnDefinitionKeysSpinBox.text()),
-            "notes_column": int(self.ui.columnDefinitionKeysSpinBox.text()),
+            "notes_column": int(self.ui.columnDefinitionNotesSpinBox.text()),
         }
 
         # database config

@@ -35,11 +35,11 @@ def format_song_name(name: str):
 
 class BaseRepertoireRepository(ABC):
     
-    def get_songs(self, song_names_column: int, keys_column: int) -> List[Tuple[str, int]]:
+    def get_songs(self, song_names_column: int, keys_column: int, notes_column: int) -> List[Tuple[str, int]]:
         """Template method that defines the algorithm structure."""
-        self._validate_column_parameters(song_names_column, keys_column)
-        song_names, song_keys, notes = self._fetch_columns(song_names_column, keys_column)
-        return self._process_song_data(song_names, song_keys)
+        self._validate_column_parameters(song_names_column, keys_column, notes_column)
+        song_names, song_keys, notes = self._fetch_columns(song_names_column, keys_column, notes_column)
+        return self._process_song_data(song_names, song_keys, notes)
     
     def _validate_column_parameters(self, song_names_column: int, keys_column: int, notes_column: int):
         """Validate that column parameters are valid."""
@@ -81,7 +81,7 @@ class BaseRepertoireRepository(ABC):
         for _, row in enumerated_rows.items():
             song_name = format_song_name(row[0])
             key = row[1].strip()
-            note = notes[2]
-            songs.append((song_name, keys[key], notes[note]))
+            note = row[2]
+            songs.append((song_name, keys[key], note))
         
         return songs

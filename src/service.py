@@ -29,7 +29,7 @@ class Service:
 
         repertoire_songs = self.repertoire_repository.get_songs(sheets_params["song_names_column"], sheets_params["keys_column"], sheets_params["notes_column"])
         songs = self.song_repository.find_all_by_names([repertoire_song[0] for repertoire_song in repertoire_songs])
-        set_items = [SetItem(song, repertoire_song[1]) for (song, repertoire_song) in zip(songs, repertoire_songs)]
+        set_items = [SetItem(song, repertoire_song[1], repertoire_song[2]) for (song, repertoire_song) in zip(songs, repertoire_songs)]
         set = Set(set_name, set_items)
         self.set_repository.save(set)
 

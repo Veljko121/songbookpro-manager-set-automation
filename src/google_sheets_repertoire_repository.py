@@ -47,11 +47,12 @@ class GoogleSheetsRepertoireRepository(BaseRepertoireRepository):
     def get_sheets(self, spreadsheet_id: str):
         return self.client.open_by_key(spreadsheet_id).worksheets()
 
-    def _fetch_columns(self, song_names_column: int, keys_column: int) -> Tuple[List[str], List[str]]:
+    def _fetch_columns(self, song_names_column: int, keys_column: int, notes_column: int) -> Tuple[List[str], List[str], List[str]]:
         worksheet = self.client.open_by_key(self.google_spreadsheet_id).worksheet(self.google_sheet)
         song_names = worksheet.col_values(song_names_column)
         song_keys = worksheet.col_values(keys_column)
-        return song_names, song_keys
+        song_notes = worksheet.col_values(notes_column)
+        return song_names, song_keys, song_notes
     
 if __name__ == "__main__":
     google_sheets_client = gspread.auth.service_account("./resources/credentials/credentials.json")
