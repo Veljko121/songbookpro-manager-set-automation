@@ -7,18 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            artifact-name: app-linux
-            executable: dist/set-creator
-          - os: windows-latest
-            artifact-name: app-windows
-            executable: dist/set-creator.exe
+  build-linux:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -40,11 +30,42 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact-name }}
-          path: ${{ matrix.executable }}
+          name: app-linux
+          path: dist/set-creator
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build executable
+        run: pyinstaller --onefile --name set-creator src/set_creator.py
+
+      - name: Build installer
+        run: |
+          choco install innosetup --yes
+          iscc .github/set-creator.iss
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-windows-installer
+          path: Output/set-creator-installer.exe
 
   release:
-    needs: build
+    needs: [build-linux, build-windows]
     runs-on: ubuntu-latest
 
     permissions:
@@ -63,4 +84,4 @@ jobs:
           name: Release v${{ github.run_number }}
           files: |
             artifacts/app-linux/set-creator
-            artifacts/app-windows/set-creator.exe
+            artifacts/app-windows-installer/set-creator-installer.exe
