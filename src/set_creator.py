@@ -30,9 +30,18 @@ class SetCreator(QWidget):
         self.adjustSize()
 
     def _connect_actions(self):
+        # Google Sheets actions
         self.ui.browseCredentialsPushButton.clicked.connect(self.browse_credentials)
         self.ui.googleSpreadsheetsComboBox.currentIndexChanged.connect(self.update_google_sheets)
+
+        # Local spreadsheets actions
+        self.ui.browseSpreadsheetsPushButton.clicked.connect(self.browse_local_spreadsheet)
+        self.ui.spreadsheetPathLineEdit.textChanged.connect(self.update_local_sheets)
+
+        # Local database actions
         self.ui.browseLocalDatabasePushButton.clicked.connect(self.browse_sqlite_database)
+
+        # Create set button
         self.ui.createSetpushButton.clicked.connect(self.create_set)
 
     def _load_properties(self):
@@ -62,6 +71,7 @@ class SetCreator(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", path, "Credentials JSON (*.json)")
         self._load_credentials(file_path)
 
+
     def _load_credentials(self, credentials_path: str):
         if credentials_path:
             self.ui.credentialsPathLineEdit.setText(credentials_path)
@@ -69,6 +79,21 @@ class SetCreator(QWidget):
             self.ui.googleSpreadsheetsComboBox.clear()
             for spreadsheet in spreadsheets:
                 self.ui.googleSpreadsheetsComboBox.addItem(spreadsheet.title, spreadsheet.id)
+
+    def browse_local_spreadsheet(self):
+        cached_path: str = self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH")
+        path = cached_path if cached_path else os.path.expanduser("~")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open local spreadsheet", path, "Microsoft  Excel (*.xlsx)")
+        self._load_local_spreadsheet(file_path)
+
+    def _load_local_spreadsheet(self, local_spreadsheet_path: str):
+        if local_spreadsheet_path:
+            self.ui.spreadsheetPathLineEdit.setText(local_spreadsheet_path)
+    
+    def update_local_sheets(self):
+        self.ui.localSheetsComboBox.clear()
+        sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), self.ui.spreadsheetPathLineEdit.text())
+        self.ui.localSheetsComboBox.addItems(sheets)
     
     def update_google_sheets(self):
         self.ui.googleSheetsComboBox.clear()
@@ -88,7 +113,7 @@ class SetCreator(QWidget):
             "google_credentials_path": self.ui.credentialsPathLineEdit.text(),
             "google_spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData(),
             "google_sheet": self.ui.googleSheetsComboBox.currentText(),
-            "local_spreadsheet_path": self.ui.localDatabasePathLineEdit.text(),
+            "local_spreadsheet_path": self.ui.spreadsheetPathLineEdit.text(),
             "local_sheet": self.ui.localSheetsComboBox.currentText(),
             "song_names_column": int(self.ui.columnDefinitionSongNamesSpinBox.text()),
             "keys_column": int(self.ui.columnDefinitionKeysSpinBox.text()),
@@ -96,7 +121,7 @@ class SetCreator(QWidget):
         }
 
         # database config
-        database_selection =self.ui.databaseTabWidget.currentIndex()
+        database_selection = self.ui.databaseTabWidget.currentIndex()
         database_params = {
             "local_database_path": self.ui.localDatabasePathLineEdit.text(),
             "songbookpro_manager_ip_address": self.ui.ipAddressLineEdit.text(),

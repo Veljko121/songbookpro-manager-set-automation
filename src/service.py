@@ -1,10 +1,12 @@
 import sqlite3
 from google_sheets_repertoire_repository import GoogleSheetsRepertoireRepository
+from local_spreadsheet_repertoire_repository import LocalSpreadsheetRepertoireRepository
 from database_song_repository import DatabaseSongRepository
 from database_set_repository import DatabaseSetRepository
 from set_item import SetItem
 from set import Set
 import gspread
+import openpyxl as xl
 
 class Service:
 
@@ -19,9 +21,13 @@ class Service:
             self.google_sheets_client = gspread.auth.service_account(credentials_path)
         return self.google_sheets_client.openall()
     
-    def get_sheets(self, sheets_selection: int, google_spreadsheet_id: dict):
+    def get_sheets(self, sheets_selection: int, spreadsheet_id: dict):
         if sheets_selection == 0:
-            return self.google_sheets_client.open_by_key(google_spreadsheet_id).worksheets()
+            return self.google_sheets_client.open_by_key(spreadsheet_id).worksheets()
+        elif sheets_selection == 1:
+            return LocalSpreadsheetRepertoireRepository().get_sheets(spreadsheet_id)
+        else:
+            raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
 
     def create_set(self, sheets_selection: int, sheets_params: dict, database_selection: int, database_params: dict, set_name: str):
         self.repertoire_repository = self._initialize_repertoire_repository(sheets_selection)
@@ -38,7 +44,8 @@ class Service:
             repertoire_repository = GoogleSheetsRepertoireRepository(self.google_sheets_client)
             return repertoire_repository
         elif sheets_selection == 1: # Local spreadsheets
-            pass # TODO
+            repertoire_repository = LocalSpreadsheetRepertoireRepository()
+            return repertoire_repository
         else:
             raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
     
@@ -58,6 +65,6 @@ class Service:
         if sheets_selection == 0: # Google Sheets
             return self.repertoire_repository.get_songs(sheets_params["google_spreadsheet_id"], sheets_params["google_sheet"], sheets_params["song_names_column"], sheets_params["keys_column"], sheets_params["notes_column"])
         elif sheets_selection == 1: # Local spreadsheets
-            pass # TODO
+            return self.repertoire_repository.get_songs(sheets_params["local_spreadsheet_path"], sheets_params["local_sheet"], sheets_params["song_names_column"], sheets_params["keys_column"], sheets_params["notes_column"])
         else:
             raise ValueError(f"Sheets method selection not valid - selected {sheets_selection}. Value should be either 0 or 1.")
