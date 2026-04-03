@@ -38,7 +38,7 @@ class BaseRepertoireRepository(ABC):
     def get_songs(self, spreadsheet_id: str, sheet_id: str, song_names_column: int, keys_column: int, notes_column: int) -> List[Tuple[str, int]]:
         """Template method that defines the algorithm structure."""
         self._validate_column_parameters(song_names_column, keys_column, notes_column)
-        song_names, song_keys, notes = self._fetch_songs(spreadsheet_id, sheet_id, song_names_column, keys_column, notes_column)
+        song_names, song_keys, notes = self._fetch_song_data(spreadsheet_id, sheet_id, song_names_column, keys_column, notes_column)
         return self._process_song_data(song_names, song_keys, notes)
     
     def _validate_column_parameters(self, song_names_column: int, keys_column: int, notes_column: int):
@@ -55,9 +55,14 @@ class BaseRepertoireRepository(ABC):
             raise ValueError(f"Song names column value ({song_names_column}) and notes column value ({notes_column}) cannot be the same.")
         if keys_column == notes_column:
             raise ValueError(f"Keys column value ({keys_column}) and notes column value ({notes_column}) cannot be the same.")
+        
+    @abstractmethod
+    def get_sheets(self, spreadsheet_id: str):
+        """Fetch the sheet names for a given spreadsheet."""
+        pass
     
     @abstractmethod
-    def _fetch_songs(self, spreadsheet_id: str, sheet_id: str, song_names_column: int, keys_column: int, notes_column: int) -> Tuple[List[str], List[str], List[str]]:
+    def _fetch_song_data(self, spreadsheet_id: str, sheet_id: str, song_names_column: int, keys_column: int, notes_column: int) -> Tuple[List[str], List[str], List[str]]:
         """Fetch the song names, keys and notes columns from the data source."""
         pass
     

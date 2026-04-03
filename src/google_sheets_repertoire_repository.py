@@ -14,7 +14,7 @@ class GoogleSheetsRepertoireRepository(BaseRepertoireRepository):
     def get_sheets(self, spreadsheet_id: str):
         return self.client.open_by_key(spreadsheet_id).worksheets()
 
-    def _fetch_songs(self, spreadsheet_id: str, sheet_id: str, song_names_column: int, keys_column: int, notes_column: int) -> Tuple[List[str], List[str], List[str]]:
+    def _fetch_song_data(self, spreadsheet_id: str, sheet_id: str, song_names_column: int, keys_column: int, notes_column: int) -> Tuple[List[str], List[str], List[str]]:
         worksheet = self.client.open_by_key(spreadsheet_id).worksheet(sheet_id)
         song_names = worksheet.col_values(song_names_column)
         song_keys = worksheet.col_values(keys_column)
