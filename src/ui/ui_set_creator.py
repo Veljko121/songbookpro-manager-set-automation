@@ -214,9 +214,9 @@ class Ui_SetCreator(object):
         self.setConfigurationFormLayout.setWidget(0, QtWidgets.QFormLayout.ItemRole.FieldRole, self.setNameLineEdit)
         self.setConfigurationSectionVerticalLayout.addLayout(self.setConfigurationFormLayout)
         self.verticalLayout_5.addLayout(self.setConfigurationSectionVerticalLayout)
-        self.createSetpushButton = QtWidgets.QPushButton(parent=SetCreator)
-        self.createSetpushButton.setObjectName("createSetpushButton")
-        self.verticalLayout_5.addWidget(self.createSetpushButton)
+        self.createSetPushButton = QtWidgets.QPushButton(parent=SetCreator)
+        self.createSetPushButton.setObjectName("createSetPushButton")
+        self.verticalLayout_5.addWidget(self.createSetPushButton)
 
         self.retranslateUi(SetCreator)
         self.repertoireTabWidget.setCurrentIndex(0)
@@ -249,4 +249,4 @@ class Ui_SetCreator(object):
         self.databaseTabWidget.setTabText(self.databaseTabWidget.indexOf(self.songbookProManagerTab), _translate("SetCreator", "SongbookPro Manager"))
         self.databaseConfigurationLabel1.setText(_translate("SetCreator", "Set configuration"))
         self.setNameLabel.setText(_translate("SetCreator", "Set name:"))
-        self.createSetpushButton.setText(_translate("SetCreator", "Create set"))
+        self.createSetPushButton.setText(_translate("SetCreator", "Create set"))
