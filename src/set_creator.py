@@ -52,7 +52,7 @@ class SetCreator(QWidget):
         # self.ui.googleSpreadsheetsComboBox.setCurrentText(self.properties_handler.get_property("GOOGLE_SPREADSHEETS"))
 
         self.ui.spreadsheetPathLineEdit.setText(self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH"))
-        # self.ui.localSheetsComboBox.setCurrentText(self.properties_handler.get_property("LOCAL_SHEET"))
+        self.ui.localSheetsComboBox.setCurrentText(self.properties_handler.get_property("LOCAL_SHEET"))
 
         self.ui.columnDefinitionSongNamesSpinBox.setValue(int(self.properties_handler.get_property("SONG_NAMES_COLUMN") if self.properties_handler.get_property("SONG_NAMES_COLUMN") else 1))
         self.ui.columnDefinitionKeysSpinBox.setValue(int(self.properties_handler.get_property("KEYS_COLUMN") if self.properties_handler.get_property("KEYS_COLUMN") else 2))
@@ -71,7 +71,6 @@ class SetCreator(QWidget):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open credentials", path, "Credentials JSON (*.json)")
         self._load_credentials(file_path)
 
-
     def _load_credentials(self, credentials_path: str):
         if credentials_path:
             self.ui.credentialsPathLineEdit.setText(credentials_path)
@@ -79,6 +78,12 @@ class SetCreator(QWidget):
             self.ui.googleSpreadsheetsComboBox.clear()
             for spreadsheet in spreadsheets:
                 self.ui.googleSpreadsheetsComboBox.addItem(spreadsheet.title, spreadsheet.id)
+    
+    def update_google_sheets(self):
+        self.ui.googleSheetsComboBox.clear()
+        sheets = self.service.get_sheets(0, self.ui.googleSpreadsheetsComboBox.currentData())
+        for sheet in sheets:
+            self.ui.googleSheetsComboBox.addItem(sheet.title, sheet.id)
 
     def browse_local_spreadsheet(self):
         cached_path: str = self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH")
@@ -92,14 +97,8 @@ class SetCreator(QWidget):
     
     def update_local_sheets(self):
         self.ui.localSheetsComboBox.clear()
-        sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), self.ui.spreadsheetPathLineEdit.text())
+        sheets = self.service.get_sheets(1, self.ui.spreadsheetPathLineEdit.text())
         self.ui.localSheetsComboBox.addItems(sheets)
-    
-    def update_google_sheets(self):
-        self.ui.googleSheetsComboBox.clear()
-        sheets = self.service.get_sheets(self.ui.repertoireTabWidget.currentIndex(), self.ui.googleSpreadsheetsComboBox.currentData())
-        for sheet in sheets:
-            self.ui.googleSheetsComboBox.addItem(sheet.title, sheet.id)
 
     def browse_sqlite_database(self):
         database_path, _ = QFileDialog.getOpenFileName(self, "Open local database", "/home/veljko/.wine/drive_c/users/veljko/AppData/Roaming/Songbook Systems/SongbookPro", "Database (*.db)")
