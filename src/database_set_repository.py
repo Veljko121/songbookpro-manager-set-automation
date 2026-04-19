@@ -1,10 +1,8 @@
-from sqlite3 import Connection, Cursor
+from sqlite3 import Connection
 from set import Set
-from typing import List
-from set_item import SetItem
-from song import Song
+from base_set_repository import BaseSetRepository
 
-class DatabaseSetRepository:
+class DatabaseSetRepository(BaseSetRepository):
 
     def __init__(self, database_client: Connection):
         self.database = database_client
@@ -13,12 +11,12 @@ class DatabaseSetRepository:
         cursor = self.database.cursor()
         try:
             cursor.execute("INSERT INTO sets(name, date, ModifiedDateTime) VALUES (?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))", (set.name, ))
-            self._save_set_items(set.items, cursor)
+
+            # Save set items
+            set_id = cursor.lastrowid
+            values = [(0, order, set_id, item.song.id, item.key_offset(), item.notes) for order, item in enumerate(set.items)]
+            cursor.executemany("INSERT INTO setitems(Capo, \"Order\", SetId, SongId, keyOfset, NotesText, ModifiedDateTime)VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))", values)
+
             self.database.commit()
         finally:
             cursor.close()
-
-    def _save_set_items(self, set_items: List[SetItem], cursor: Cursor):
-        set_id = cursor.lastrowid
-        values = [(0, order, set_id, item.song.id, item.key_offset(), item.notes) for order, item in enumerate(set_items)]
-        cursor.executemany("INSERT INTO setitems(Capo, \"Order\", SetId, SongId, keyOfset, NotesText, ModifiedDateTime)VALUES (?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))", values)
