@@ -42,7 +42,7 @@ class SetCreator(QWidget):
         self.ui.browseLocalDatabasePushButton.clicked.connect(self.browse_sqlite_database)
 
         # Create set button
-        self.ui.createSetpushButton.clicked.connect(self.create_set)
+        self.ui.createSetPushButton.clicked.connect(self.create_set)
 
     def _load_properties(self):
         credentials_path = self.properties_handler.get_property("GOOGLE_CREDENTIALS_PATH")
