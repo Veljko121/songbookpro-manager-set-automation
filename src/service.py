@@ -6,13 +6,16 @@ from database_set_repository import DatabaseSetRepository
 from set_item import SetItem
 from set import Set
 import gspread
-import openpyxl as xl
+import requests
+from songbookpro_manager_set_repository import SongbookProManagerSetRepository
+from songbookpro_manager_song_repository import SongbookProManagerSongRepository
 
 class Service:
 
     def __init__(self):
         self.credentials_path = None
         self.google_sheets_client = None
+        self.session = requests.Session()
 
     def get_available_google_spreadsheets(self, credentials_path: str):
         if self.credentials_path and self.credentials_path != credentials_path:
@@ -57,7 +60,11 @@ class Service:
             set_repository = DatabaseSetRepository(database_client)
             return song_repository, set_repository
         elif database_selection == 1: # SongbookPro Manager
-            pass # TODO
+            ip_address = database_params["songbookpro_manager_ip_address"]
+            port = database_params["songbookpro_manager_port"]
+            set_repository = SongbookProManagerSetRepository(ip_address, port, self.session)
+            song_repository = SongbookProManagerSongRepository(ip_address, port, self.session)
+            return song_repository, set_repository
         else:
             raise ValueError(f"Database method selection not valid - selected {database_selection}. Value should be either 0 or 1.")
 
