@@ -106,35 +106,54 @@ class SetCreator(QWidget):
             self.ui.localDatabasePathLineEdit.setText(database_path)
         
     def create_set(self):
-        # sheets config
-        sheets_selection = self.ui.repertoireTabWidget.currentIndex()
-        sheets_params = {
-            "google_credentials_path": self.ui.credentialsPathLineEdit.text(),
-            "google_spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData(),
-            "google_sheet": self.ui.googleSheetsComboBox.currentText(),
-            "local_spreadsheet_path": self.ui.spreadsheetPathLineEdit.text(),
-            "local_sheet": self.ui.localSheetsComboBox.currentText(),
-            "song_names_column": int(self.ui.columnDefinitionSongNamesSpinBox.text()),
-            "keys_column": int(self.ui.columnDefinitionKeysSpinBox.text()),
-            "notes_column": int(self.ui.columnDefinitionNotesSpinBox.text()),
-        }
-
-        # database config
-        database_selection = self.ui.databaseTabWidget.currentIndex()
-        database_params = {
-            "local_database_path": self.ui.localDatabasePathLineEdit.text(),
-            "songbookpro_manager_ip_address": self.ui.ipAddressLineEdit.text(),
-            "songbookpro_manager_port": self.ui.portLineEdit.text(),
-        }
-
-        # set config
-        set_name = self.ui.setNameLineEdit.text()
-
         try:
+            # sheets config
+            sheets_selection = self.ui.repertoireTabWidget.currentIndex()
+            song_names_column = int(self.ui.columnDefinitionSongNamesSpinBox.text())
+            keys_column = int(self.ui.columnDefinitionKeysSpinBox.text())
+            notes_column = int(self.ui.columnDefinitionNotesSpinBox.text())
+            self._validate_column_parameters(song_names_column, keys_column, notes_column)
+            sheets_params = {
+                "google_credentials_path": self.ui.credentialsPathLineEdit.text(),
+                "google_spreadsheet_id": self.ui.googleSpreadsheetsComboBox.currentData(),
+                "google_sheet": self.ui.googleSheetsComboBox.currentText(),
+                "local_spreadsheet_path": self.ui.spreadsheetPathLineEdit.text(),
+                "local_sheet": self.ui.localSheetsComboBox.currentText(),
+                "song_names_column": song_names_column,
+                "keys_column": keys_column,
+                "notes_column": notes_column,
+            }
+
+            # database config
+            database_selection = self.ui.databaseTabWidget.currentIndex()
+            database_params = {
+                "local_database_path": self.ui.localDatabasePathLineEdit.text(),
+                "songbookpro_manager_ip_address": self.ui.ipAddressLineEdit.text(),
+                "songbookpro_manager_port": self.ui.portLineEdit.text(),
+            }
+
+            # set config
+            set_name = self.ui.setNameLineEdit.text()
+
             self.service.create_set(sheets_selection, sheets_params, database_selection, database_params, set_name)
             self.show_message(QMessageBox.Icon.Information, "Success", f"Set '{set_name}' created successfully.")
         except ValueError as e:
             self.show_message(QMessageBox.Icon.Critical, "Error", str(e))
+    
+    def _validate_column_parameters(self, song_names_column: int, keys_column: int, notes_column: int):
+        """Validate that column parameters are valid."""
+        if song_names_column <= 0:
+            raise ValueError(f"Song names column value must be greater than 0 ({song_names_column}).")
+        if keys_column <= 0:
+            raise ValueError(f"Keys column value must be greater than 0 ({keys_column}).")
+        if notes_column <= 0:
+            raise ValueError(f"Notes column value must be greater than 0 ({notes_column}).")
+        if song_names_column == keys_column:
+            raise ValueError(f"Song names column value ({song_names_column}) and keys column value ({keys_column}) cannot be the same.")
+        if song_names_column == notes_column:
+            raise ValueError(f"Song names column value ({song_names_column}) and notes column value ({notes_column}) cannot be the same.")
+        if keys_column == notes_column:
+            raise ValueError(f"Keys column value ({keys_column}) and notes column value ({notes_column}) cannot be the same.")
 
     def show_message(self, message_type: QMessageBox.Icon, message_title: str, message_content: str):
         msg_box = QMessageBox(self)
