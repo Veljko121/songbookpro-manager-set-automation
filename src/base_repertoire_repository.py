@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-keys = {
+KEY_MAP = {
     "A"  :  0,
     "B"  :  1,
     "H"  :  2,
@@ -38,8 +38,9 @@ class BaseRepertoireRepository(ABC):
     def get_songs(self, spreadsheet_id: str, sheet_id: str, song_names_column: int, keys_column: int, notes_column: int) -> List[Tuple[str, int]]:
         """Template method that defines the algorithm structure."""
         self._validate_column_parameters(song_names_column, keys_column, notes_column)
-        song_names, song_keys, notes = self._fetch_song_data(spreadsheet_id, sheet_id, song_names_column, keys_column, notes_column)
-        return self._process_song_data(song_names, song_keys, notes)
+        song_names, song_keys, song_notes = self._fetch_song_data(spreadsheet_id, sheet_id, song_names_column, keys_column, notes_column)
+        songs = self._combine_song_data(song_names, song_keys, song_notes)
+        return self._process_song_data(songs)
     
     def _validate_column_parameters(self, song_names_column: int, keys_column: int, notes_column: int):
         """Validate that column parameters are valid."""
@@ -66,27 +67,40 @@ class BaseRepertoireRepository(ABC):
         """Fetch the song names, keys and notes columns from the data source."""
         pass
     
-    def _process_song_data(self, song_names: List[str], song_keys: List[str], notes: List[str]) -> List[Tuple[str, int, str]]:
-        enumerated_rows = {}
-        for i, row in enumerate(zip(song_names, song_keys, notes)):
-            if row[0]:
-                enumerated_rows[i] = row
+    def _combine_song_data(self, song_names: List[str], song_keys: List[str], song_notes: List[str]) -> List[Tuple[str, str, str]]:
+        songs = []
+        for i in range(len(song_names)):
+            name = song_names[i]
+            key = song_keys[i]
+            note = None
+            if i < len(song_notes):
+                if song_notes[i]:
+                    note = song_notes[i]
+            song = (name, key, note)
+            songs.append(song)
+        return songs
+    
+    def _process_song_data(self, songs: List[Tuple[str, str, str]]) -> List[Tuple[str, int, str]]:
+        enumerated_songs = {}
+        for i, song in enumerate(songs):
+            if song[0]:
+                enumerated_songs[i] = song
 
         row_ids_with_error = []
-        for id, row in enumerated_rows.items():
+        for id, song in enumerated_songs.items():
             try:
-                keys[row[1]]
+                KEY_MAP[song[1]]
             except KeyError:
                 row_ids_with_error.append(id)
         
         if len(row_ids_with_error) > 0:
             raise ValueError(f"Key errors in rows: {[row + 1 for row in row_ids_with_error]}.")
         
-        songs = []
-        for _, row in enumerated_rows.items():
-            song_name = format_song_name(row[0])
-            key = row[1].strip()
-            note = row[2]
-            songs.append((song_name, keys[key], note))
-        
-        return songs
+        processed = []
+        for song in enumerated_songs.values():
+            name = format_song_name(song[0])
+            key = song[1].strip()
+            note = song[2]
+            processed.append((name, KEY_MAP[key], note))
+
+        return processed
