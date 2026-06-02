@@ -38,6 +38,7 @@ class SetCreator(QWidget):
         # Google Sheets actions
         self.ui.browseCredentialsPushButton.clicked.connect(self.browse_credentials)
         self.ui.googleSpreadsheetsComboBox.currentIndexChanged.connect(self.update_google_sheets)
+        self.ui.reloadGoogleSheetsPushButton.clicked.connect(lambda: self._load_credentials(self.ui.credentialsPathLineEdit.text()))
 
         # Local spreadsheets actions
         self.ui.browseSpreadsheetsPushButton.clicked.connect(self.browse_local_spreadsheet)
@@ -50,20 +51,32 @@ class SetCreator(QWidget):
         self.ui.createSetPushButton.clicked.connect(self.create_set)
 
     def _load_properties(self):
+
         credentials_path = self.properties_handler.get_property("GOOGLE_CREDENTIALS_PATH")
-        self.ui.credentialsPathLineEdit.setText(credentials_path)
+        if os.path.isfile(credentials_path):
+            self.ui.credentialsPathLineEdit.setText(credentials_path)
+        else:
+            self.properties_handler.delete_property("GOOGLE_CREDENTIALS_PATH")
         # self._load_credentials(credentials_path)
         # self.ui.googleSheetsComboBox.setCurrentText(self.properties_handler.get_property("GOOGLE_SHEET"))
         # self.ui.googleSpreadsheetsComboBox.setCurrentText(self.properties_handler.get_property("GOOGLE_SPREADSHEETS"))
 
-        self.ui.spreadsheetPathLineEdit.setText(self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH"))
-        self.ui.localSheetsComboBox.setCurrentText(self.properties_handler.get_property("LOCAL_SHEET"))
+        local_spreadsheet_path = self.properties_handler.get_property("LOCAL_SPREADSHEET_PATH")
+        if os.path.isfile(local_spreadsheet_path):
+            self.ui.spreadsheetPathLineEdit.setText(local_spreadsheet_path)
+            self.ui.localSheetsComboBox.setCurrentText(self.properties_handler.get_property("LOCAL_SHEET"))
+        else:
+            self.properties_handler.delete_property("LOCAL_SPREADSHEET_PATH")
 
         self.ui.columnDefinitionSongNamesSpinBox.setValue(int(self.properties_handler.get_property("SONG_NAMES_COLUMN") if self.properties_handler.get_property("SONG_NAMES_COLUMN") else 1))
         self.ui.columnDefinitionKeysSpinBox.setValue(int(self.properties_handler.get_property("KEYS_COLUMN") if self.properties_handler.get_property("KEYS_COLUMN") else 2))
-        self.ui.columnDefinitionNotesSpinBox.setValue(int(self.properties_handler.get_property("NOTES_COLUMN") if self.properties_handler.get_property("NOTES_COLUMN") else 2))
+        self.ui.columnDefinitionNotesSpinBox.setValue(int(self.properties_handler.get_property("NOTES_COLUMN") if self.properties_handler.get_property("NOTES_COLUMN") else 3))
 
-        self.ui.localDatabasePathLineEdit.setText(self.properties_handler.get_property("LOCAL_DATABASE_PATH"))
+        local_database_path = self.properties_handler.get_property("LOCAL_DATABASE_PATH")
+        if os.path.isfile(local_database_path):
+            self.ui.localDatabasePathLineEdit.setText(self.properties_handler.get_property("LOCAL_DATABASE_PATH"))
+        else:
+            self.properties_handler.delete_property("LOCAL_DATABASE_PATH")
 
         self.ui.ipAddressLineEdit.setText(self.properties_handler.get_property("SONGBOOKPRO_MANAGER_IP_ADDRESS"))
         self.ui.portLineEdit.setText(self.properties_handler.get_property("SONGBOOKPRO_MANAGER_PORT"))
