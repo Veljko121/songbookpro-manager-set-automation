@@ -19,12 +19,14 @@ class SongbookProManagerSongRepository(BaseSongRepository):
     def _fetch_all_songs(self):
         response = self.session.get(self.base_url + "/api/editor/songs")
         songs_json = response.json()
-        self.all_songs = [Song(song['Id'], song['name'], song['key'], song['subTitle'], song['KeyShift']) for song in songs_json]
+        self.all_songs = [Song(song['Id'], song['name'], song['author'], song['key'], song['subTitle'], song['KeyShift']) for song in songs_json]
 
     def _matches(self, name: str, song: Song):
         if name in song.name:
             return True
         if name == song.subtitle:
+            return True
+        if name == f"{song.name} ({song.author})":
             return True
         return False
     

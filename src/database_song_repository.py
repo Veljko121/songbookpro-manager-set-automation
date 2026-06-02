@@ -9,7 +9,7 @@ class DatabaseSongRepository(BaseSongRepository):
 
     def find_by_name(self, name: str) -> Song:
         cursor = self.database.cursor()
-        cursor.execute("SELECT * FROM songs WHERE name = ? OR subTitle = ?", (name, name))
+        cursor.execute("SELECT * FROM songs WHERE name = ? OR subTitle = ? OR name || ' (' || author || ')' = ?", (name, name, name))
         row = cursor.fetchone()
         cursor.close()
         return self._map_row_to_song(row) if row else None
@@ -19,6 +19,7 @@ class DatabaseSongRepository(BaseSongRepository):
         song = Song(
             dict_row["Id"],
             dict_row["name"],
+            dict_row["author"],
             dict_row["key"],
             dict_row["subTitle"],
             dict_row["KeyShift"],
