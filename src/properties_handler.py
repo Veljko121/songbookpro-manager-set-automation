@@ -33,5 +33,13 @@ class PropertiesHandler():
             for property_name in properties.keys():
                 file.write(self._to_property_line(property_name, properties[property_name]))
 
+    def _save_properties(self):
+        self.save_properties(self.properties)
+
     def _to_property_line(self, key, value):
         return f"{key}={value}\n"
+
+    def delete_property(self, key):
+        if key in self.properties.keys():
+            self.properties.pop(key)
+        self._save_properties()
